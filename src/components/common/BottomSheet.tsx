@@ -12,6 +12,7 @@ interface BottomSheetProps {
   footer?: React.ReactNode;
   zIndex?: number;
   fixedHeight?: boolean;
+  noScroll?: boolean;
 }
 
 // 휴대폰 프레임 안에서 아래에서 위로 올라오고, 완료/취소 시 아래로 내려가는 공통 바텀시트
@@ -24,6 +25,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   footer,
   zIndex = 50,
   fixedHeight = false,
+  noScroll = false,
 }) => {
   const [mounted, setMounted] = useState(isOpen);
   const [visible, setVisible] = useState(false);
@@ -103,7 +105,13 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4">{display.children}</div>
+        <div
+          className={`flex-1 ${
+            noScroll ? 'overflow-hidden' : 'overflow-y-auto no-scrollbar'
+          } px-5 py-4`}
+        >
+          {display.children}
+        </div>
         {display.footer && (
           <div className="px-5 pt-3 pb-5 border-t border-[#EEF2F6] bg-white shrink-0">
             {display.footer}

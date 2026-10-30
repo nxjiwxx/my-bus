@@ -15,24 +15,24 @@ interface ArrivalSelectSheetProps {
 
 const REGIONS = ['전체', '수도권', '경기', '충청', '강원', '영남', '호남'] as const;
 
-// 터미널별 고속 / 시외 / 고/시 컬러 뱃지
+// 터미널별 고속 / 시외 / 고/시 통일된 Service Color Fill 뱃지
 const TerminalTypeBadge: React.FC<{ type?: Station['availableTypes'] }> = ({ type = 'both' }) => {
   if (type === 'express') {
     return (
-      <span className="w-10 py-1 rounded-lg bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[10px] font-extrabold text-center shrink-0 whitespace-nowrap">
+      <span className="w-10 py-1 rounded-lg bg-[#2563EB] text-white text-[10px] font-extrabold text-center shrink-0 whitespace-nowrap shadow-2xs">
         고속
       </span>
     );
   }
   if (type === 'intercity') {
     return (
-      <span className="w-10 py-1 rounded-lg bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[10px] font-extrabold text-center shrink-0 whitespace-nowrap">
+      <span className="w-10 py-1 rounded-lg bg-[#059669] text-white text-[10px] font-extrabold text-center shrink-0 whitespace-nowrap shadow-2xs">
         시외
       </span>
     );
   }
   return (
-    <span className="w-10 py-1 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#059669] text-white text-[10px] font-extrabold text-center shrink-0 whitespace-nowrap shadow-2xs">
+    <span className="w-10 py-1 rounded-lg bg-[#132B45] text-white text-[10px] font-extrabold text-center shrink-0 whitespace-nowrap shadow-2xs">
       고/시
     </span>
   );

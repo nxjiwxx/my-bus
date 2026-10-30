@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { BottomSheet } from '../common/BottomSheet';
 
 interface DateSelectModalProps {
@@ -52,6 +52,8 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
   const [viewMonth, setViewMonth] = useState<number>(parsed.month);
   const [selectedDate, setSelectedDate] = useState<string>(currentDate);
   const [selectedHour, setSelectedHour] = useState<number>(currentHour);
+  const [dateChosenInSession, setDateChosenInSession] = useState<boolean>(false);
+  const [hourChosenInSession, setHourChosenInSession] = useState<boolean>(false);
 
   const hourScrollRef = useRef<HTMLDivElement>(null);
 
@@ -62,6 +64,8 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
       setViewMonth(p.month);
       setSelectedDate(currentDate);
       setSelectedHour(currentHour);
+      setDateChosenInSession(false);
+      setHourChosenInSession(false);
 
       // 모달 열릴 때 선택된 시간 배지가 중앙에 오도록 스크롤
       setTimeout(() => {
@@ -111,9 +115,22 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
     return false;
   };
 
-  const handleConfirm = () => {
-    onSelect(selectedDate, selectedHour);
-    onClose();
+  const handlePickDate = (formatted: string) => {
+    setSelectedDate(formatted);
+    setDateChosenInSession(true);
+    onSelect(formatted, selectedHour);
+    if (hourChosenInSession) {
+      onClose();
+    }
+  };
+
+  const handlePickHour = (hour: number) => {
+    setSelectedHour(hour);
+    setHourChosenInSession(true);
+    onSelect(selectedDate, hour);
+    if (dateChosenInSession || selectedDate) {
+      onClose();
+    }
   };
 
   return (
@@ -121,64 +138,45 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       fixedHeight
+      noScroll
       title="가는 날 · 출발 시간 설정"
-      subtitle="날짜와 출발 시간을 선택하면 해당 시간 이후 버스만 조회됩니다"
-      footer={
-        <button
-          type="button"
-          onClick={handleConfirm}
-          className="w-full py-3.5 rounded-2xl bg-[#132B45] hover:bg-[#1E3A8A] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-sm transition-colors"
-        >
-          <Check className="w-4 h-4 shrink-0" />
-          <span className="whitespace-nowrap">{selectedDate}</span>
-          <span className="h-3 w-px bg-white/35 shrink-0" />
-          <span className="whitespace-nowrap">
-            {String(selectedHour).padStart(2, '0')}:00시 이후 적용
-          </span>
-        </button>
-      }
+      subtitle="날짜와 출발 시간을 선택하면 자동으로 적용됩니다"
     >
-      <div className="p-4 space-y-5">
+      <div className="h-full flex flex-col justify-between py-1">
         {/* 1. 달력 그리드 영역 */}
-        <div className="space-y-3">
-          {/* 월 이동 헤더 (이전 달 / 다음 달 화살표) */}
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-1.5">
-              <CalendarIcon className="w-4 h-4 text-[#2563EB]" />
-              <span className="text-xs font-bold text-[#64748B]">출발 날짜 선택</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handlePrevMonth}
-                disabled={!canGoPrevMonth}
-                aria-label="이전 달"
-                className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-colors ${
-                  canGoPrevMonth
-                    ? 'bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC]'
-                    : 'bg-[#F8FAFC] border-[#EEF2F6] text-[#CBD5E1] cursor-not-allowed'
-                }`}
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <span className="text-sm font-black text-[#0F172A] min-w-[88px] text-center whitespace-nowrap">
-                {viewYear}년 {viewMonth + 1}월
-              </span>
-              <button
-                type="button"
-                onClick={handleNextMonth}
-                aria-label="다음 달"
-                className="w-8 h-8 rounded-xl border bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] flex items-center justify-center transition-colors"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+        <div className="space-y-2.5">
+          {/* 월 이동 헤더 (날짜와 변경 버튼 중앙 정렬) */}
+          <div className="flex items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={handlePrevMonth}
+              disabled={!canGoPrevMonth}
+              aria-label="이전 달"
+              className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-colors ${
+                canGoPrevMonth
+                  ? 'bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC]'
+                  : 'bg-[#F8FAFC] border-[#EEF2F6] text-[#CBD5E1] cursor-not-allowed'
+              }`}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-sm font-black text-[#0F172A] min-w-[96px] text-center whitespace-nowrap">
+              {viewYear}년 {viewMonth + 1}월
+            </span>
+            <button
+              type="button"
+              onClick={handleNextMonth}
+              aria-label="다음 달"
+              className="w-8 h-8 rounded-xl border bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] flex items-center justify-center transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
 
-          {/* 달력 카드 */}
-          <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-[#EEF2F6]">
+          {/* 달력 카드 (세로 스크롤 없이 한눈에 들어오도록 컴팩트 구성) */}
+          <div className="p-2.5 rounded-2xl bg-[#F8FAFC] border border-[#EEF2F6]">
             {/* 요일 헤더 */}
-            <div className="grid grid-cols-7 text-center pb-2 border-b border-[#E2E8F0]">
+            <div className="grid grid-cols-7 text-center pb-1.5 border-b border-[#E2E8F0]">
               {WEEKDAYS.map((dayName, idx) => (
                 <span
                   key={dayName}
@@ -196,9 +194,9 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
             </div>
 
             {/* 날짜 7열 그리드 */}
-            <div className="grid grid-cols-7 gap-y-1.5 gap-x-1 pt-2">
+            <div className="grid grid-cols-7 gap-y-1 gap-x-1 pt-1.5">
               {Array.from({ length: firstDayOfWeek }).map((_, emptyIdx) => (
-                <div key={`empty-${emptyIdx}`} className="h-10" />
+                <div key={`empty-${emptyIdx}`} className="h-8" />
               ))}
 
               {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
@@ -216,8 +214,8 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
                     key={day}
                     type="button"
                     disabled={disabled}
-                    onClick={() => setSelectedDate(formatted)}
-                    className={`h-10 rounded-xl flex flex-col items-center justify-center transition-all relative ${
+                    onClick={() => handlePickDate(formatted)}
+                    className={`h-8 rounded-xl flex flex-col items-center justify-center transition-all relative ${
                       disabled
                         ? 'opacity-30 cursor-not-allowed text-[#94A3B8]'
                         : isSelected
@@ -234,7 +232,7 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
                     <span className="text-xs leading-none">{day}</span>
                     {isToday && (
                       <span
-                        className={`text-[8px] font-extrabold leading-none mt-0.5 ${
+                        className={`text-[7px] font-extrabold leading-none mt-0.5 ${
                           isSelected ? 'text-[#93C5FD]' : 'text-[#2563EB]'
                         }`}
                       >
@@ -248,25 +246,11 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
           </div>
         </div>
 
-        {/* 2. 출발 시간 가로 선택 영역 (00시 ~ 24시) */}
-        <div className="space-y-2.5 pt-1 border-t border-[#EEF2F6]">
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-[#2563EB]" />
-              <span className="text-xs font-bold text-[#0F172A]">출발 시간 (00시 ~ 24시)</span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px] font-extrabold text-[#0F172A] whitespace-nowrap">
-              <span className="text-[#64748B]">{selectedDate}</span>
-              <span className="h-3 w-px bg-[#CBD5E1] shrink-0" />
-              <span className="text-[#2563EB]">
-                {String(selectedHour).padStart(2, '0')}:00시 이후
-              </span>
-            </div>
-          </div>
-
+        {/* 2. 출발 시간 가로 선택 영역 (시계 아이콘 · '출발 시간(00시~24시)' · 날짜 표기 제거) */}
+        <div className="pt-3 border-t border-[#EEF2F6]">
           <div
             ref={hourScrollRef}
-            className="flex items-center gap-1.5 overflow-x-auto pb-1.5 pt-0.5 no-scrollbar"
+            className="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar"
           >
             {HOURS.map((hour) => {
               const isSelected = selectedHour === hour;
@@ -276,7 +260,7 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
                   key={hour}
                   type="button"
                   data-hour={hour}
-                  onClick={() => setSelectedHour(hour)}
+                  onClick={() => handlePickHour(hour)}
                   className={`shrink-0 px-3.5 py-2 rounded-xl text-xs font-extrabold border whitespace-nowrap transition-all ${
                     isSelected
                       ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-xs'

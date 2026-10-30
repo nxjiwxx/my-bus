@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
-import { BookingMode, BusGrade, BusSchedule, SeatPassenger, Ticket } from '@/types';
+import { BusGrade, BusSchedule, SeatPassenger, Ticket } from '@/types';
 import { getBusSchedules } from '@/mock/data';
 import { TopAppBar } from '../common/TopAppBar';
 import { BusSearchForm } from './BusSearchForm';
@@ -16,18 +16,15 @@ import { emptyPassengerState } from '@/lib/utils';
 export const BookingView: React.FC = () => {
   const {
     setCurrentTab,
-    bookingMode,
-    setBookingMode,
     bookingPreset,
     setBookingPreset,
     bookBusTicket,
   } = useApp();
 
   const [step, setStep] = useState<'search' | 'results' | 'seats'>('search');
-  const [searchMode, setSearchMode] = useState<BookingMode>(bookingMode);
   const [searchCriteria, setSearchCriteria] = useState({
     departure: '천안',
-    arrival: bookingMode === 'intercity' ? '동서울' : '서울경부',
+    arrival: '서울경부',
     date: '2026-10-30 (금)',
     departureHour: 17,
   });
@@ -44,25 +41,9 @@ export const BookingView: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [completedTicket, setCompletedTicket] = useState<Ticket | null>(null);
 
-  // 진입 모드(통합 / 고속 전용 / 시외 전용) 변경 시 동기화
-  useEffect(() => {
-    setSearchMode(bookingMode);
-    setStep('search');
-    setSearchCriteria((prev) => ({
-      ...prev,
-      arrival:
-        bookingMode === 'intercity' && prev.arrival === '서울경부'
-          ? '동서울'
-          : bookingMode === 'express' && prev.arrival === '동서울'
-          ? '서울경부'
-          : prev.arrival,
-    }));
-  }, [bookingMode]);
-
   // AI 프리셋 감지 시 자동 검색 결과 화면으로 이동
   useEffect(() => {
     if (bookingPreset) {
-      setSearchMode(bookingPreset.busType);
       const parsedHour =
         typeof bookingPreset.departureHour === 'number'
           ? bookingPreset.departureHour
@@ -81,9 +62,9 @@ export const BookingView: React.FC = () => {
     }
   }, [bookingPreset, setBookingPreset]);
 
-  // 선택된 도착지 및 출발 시간(00시~24시) 이후 버스만 필터링 (통합/고속/시외 지원)
+  // 고속·시외 통합 버스 시간표 조회
   const allRouteSchedules = getBusSchedules(
-    searchMode,
+    'integrated',
     searchCriteria.departure,
     searchCriteria.arrival,
     searchCriteria.departureHour
@@ -137,41 +118,28 @@ export const BookingView: React.FC = () => {
     setCompletedTicket(newTicket);
   };
 
-  const isFromHomeDedicatedButton = bookingMode === 'express' || bookingMode === 'intercity';
-
   const headerTitle =
     step === 'search'
-      ? bookingMode === 'express'
-        ? '고속버스 예매'
-        : bookingMode === 'intercity'
-        ? '시외버스 예매'
-        : '고속 · 시외 통합 예매'
+      ? '버스 예매'
       : step === 'results'
-      ? `${searchCriteria.arrival}행 시간표`
+      ? `${searchCriteria.departure} → ${searchCriteria.arrival}`
       : '좌석 선택';
 
   return (
     <div className="flex-1 flex flex-col bg-[#F4F6F9]">
       <TopAppBar
         title={headerTitle}
-        showBack={step !== 'search' || isFromHomeDedicatedButton}
+        showBack={step !== 'search'}
         onBack={() => {
           if (step === 'seats') setStep('results');
           else if (step === 'results') setStep('search');
-          else if (step === 'search' && isFromHomeDedicatedButton) {
-            setBookingMode('integrated');
-            setCurrentTab('home');
-          }
         }}
       />
 
-      {/* STEP 1: 버스 예매 메인 검색 폼 */}
+      {/* STEP 1: 고속·시외 통합 버스 예매 메인 검색 폼 */}
       {step === 'search' && (
         <div className="p-4 space-y-4">
           <BusSearchForm
-            mode={searchMode}
-            onModeChange={setSearchMode}
-            lockedMode={isFromHomeDedicatedButton}
             onSearch={handleSearchSubmit}
             initialDeparture={searchCriteria.departure}
             initialArrival={searchCriteria.arrival}
@@ -207,15 +175,11 @@ export const BookingView: React.FC = () => {
                 </span>
               </div>
               <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#F1F5F9] text-[#132B45]">
-                  {searchMode === 'integrated'
-                    ? '고속·시외 통합'
-                    : searchMode === 'express'
-                    ? '고속버스'
-                    : '시외버스'}
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#132B45] text-white">
+                  고속·시외 통합
                 </span>
                 <span className="text-sm font-extrabold text-[#0F172A]">
-                  {searchCriteria.arrival}행 ({filteredSchedules.length}편)
+                  {searchCriteria.departure} → {searchCriteria.arrival} ({filteredSchedules.length}편)
                 </span>
               </div>
             </div>
