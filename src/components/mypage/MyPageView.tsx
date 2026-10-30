@@ -5,6 +5,7 @@ import { useApp } from '@/context/AppContext';
 import { TopAppBar } from '../common/TopAppBar';
 import { RoutineCard } from './RoutineCard';
 import { AddRoutineModal } from './AddRoutineModal';
+import { TerminalLiveCard } from '../home/TerminalLiveCard';
 import {
   Sparkles,
   Plus,
@@ -205,6 +206,9 @@ export const MyPageView: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* 천안종합버스터미널 실시간 현황 */}
+        <TerminalLiveCard />
 
         {/* 터미널 고객센터 안내 */}
         <div className="p-4 bg-white rounded-3xl border border-[#EEF2F6] shadow-xs text-xs space-y-1 text-[#64748B]">

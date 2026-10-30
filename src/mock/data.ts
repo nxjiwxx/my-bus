@@ -321,16 +321,131 @@ function minutesToHhmm(total: number): string {
 }
 
 export function getRouteStops(schedule: BusSchedule): RouteStop[] {
-  const template = ROUTE_TEMPLATES[schedule.arrivalStation] || ROUTE_TEMPLATES['서울경부'];
+  const defaultTemplate: { name: string; kind: RouteStop['kind']; ratio: number; note?: string }[] = [
+    { name: '천안종합버스터미널', kind: 'origin', ratio: 0, note: '출발' },
+    { name: '천안IC', kind: 'via', ratio: 0.12, note: '고속도로 진입' },
+    { name: '중간 휴게소 · 분기점', kind: 'rest', ratio: 0.5, note: '경유/정차' },
+    { name: `${schedule.arrivalStation}IC`, kind: 'via', ratio: 0.85 },
+    { name: schedule.arrivalStation, kind: 'destination', ratio: 1, note: '도착' },
+  ];
+  const template = ROUTE_TEMPLATES[schedule.arrivalStation] || defaultTemplate;
   const dep = hhmmToMinutes(schedule.departureTime);
   const arr = hhmmToMinutes(schedule.arrivalTime);
-  const total = Math.max(10, arr - dep);
+  const total = Math.max(10, arr >= dep ? arr - dep : arr + 1440 - dep);
   return template.map((stop) => ({
     name: stop.name,
     kind: stop.kind,
     note: stop.note,
     time: stop.kind === 'destination' ? schedule.arrivalTime : minutesToHhmm(dep + Math.round(total * stop.ratio)),
   }));
+}
+
+// 도착지별 노선 메타데이터 및 00시~24시 전 시간대 스케줄 생성기
+const DESTINATION_META: Record<
+  string,
+  { durationMinutes: number; durationLabel: string; baseFee: number; platform: string; companies: string[] }
+> = {
+  서울경부: { durationMinutes: 75, durationLabel: '1시간 15분', baseFee: 7400, platform: '7번 홈', companies: ['동양고속', '천안고속', '중앙고속', '금호고속'] },
+  동서울: { durationMinutes: 80, durationLabel: '1시간 20분', baseFee: 8200, platform: '3번 홈', companies: ['충남고속', '대원고속', '동양고속'] },
+  인천: { durationMinutes: 95, durationLabel: '1시간 35분', baseFee: 9400, platform: '5번 홈', companies: ['금남고속', '대원고속'] },
+  수원: { durationMinutes: 50, durationLabel: '50분', baseFee: 4500, platform: '12번 홈', companies: ['용남고속', '삼흥고속'] },
+  대전복합: { durationMinutes: 55, durationLabel: '55분', baseFee: 5800, platform: '6번 홈', companies: ['동양고속', '금남고속'] },
+  청주: { durationMinutes: 50, durationLabel: '50분', baseFee: 5200, platform: '14번 홈', companies: ['서울고속', '새서울고속'] },
+  부산: { durationMinutes: 210, durationLabel: '3시간 30분', baseFee: 24800, platform: '1번 홈', companies: ['천일고속', '한일고속'] },
+  동대구: { durationMinutes: 145, durationLabel: '2시간 25분', baseFee: 16900, platform: '2번 홈', companies: ['동양고속', '코리아와이드'] },
+  '광주(유·스퀘어)': { durationMinutes: 140, durationLabel: '2시간 20분', baseFee: 16200, platform: '4번 홈', companies: ['금호고속', '중앙고속'] },
+  안산: { durationMinutes: 75, durationLabel: '1시간 15분', baseFee: 6900, platform: '11번 홈', companies: ['대원고속', '경남여객'] },
+  '성남(야탑)': { durationMinutes: 65, durationLabel: '1시간 05분', baseFee: 6300, platform: '10번 홈', companies: ['대원고속', '충남고속'] },
+  고양백석: { durationMinutes: 105, durationLabel: '1시간 45분', baseFee: 10200, platform: '9번 홈', companies: ['대원고속'] },
+  원주: { durationMinutes: 110, durationLabel: '1시간 50분', baseFee: 10800, platform: '15번 홈', companies: ['대원고속', '강원고속'] },
+  강릉: { durationMinutes: 185, durationLabel: '3시간 05분', baseFee: 21400, platform: '15번 홈', companies: ['강원고속', '동해상사고속'] },
+  세종고속: { durationMinutes: 35, durationLabel: '35분', baseFee: 3800, platform: '13번 홈', companies: ['금남고속', '삼흥고속'] },
+  '아산(온양)': { durationMinutes: 25, durationLabel: '25분', baseFee: 2800, platform: '16번 홈', companies: ['충남고속'] },
+  전주: { durationMinutes: 95, durationLabel: '1시간 35분', baseFee: 11200, platform: '4번 홈', companies: ['전북고속', '금호고속'] },
+  울산: { durationMinutes: 195, durationLabel: '3시간 15분', baseFee: 22900, platform: '1번 홈', companies: ['천일고속', '한일고속'] },
+  포항: { durationMinutes: 180, durationLabel: '3시간 00분', baseFee: 20500, platform: '2번 홈', companies: ['천마고속', '아성고속'] },
+};
+
+const DEPARTURE_TIMES_FULL_DAY = [
+  '06:00',
+  '07:00',
+  '08:00',
+  '09:00',
+  '10:00',
+  '11:00',
+  '12:00',
+  '13:00',
+  '14:00',
+  '15:00',
+  '16:00',
+  '17:00',
+  '17:30',
+  '18:00',
+  '18:30',
+  '19:00',
+  '19:30',
+  '20:30',
+  '21:30',
+  '22:30',
+  '23:30',
+  '24:00',
+];
+
+export function getBusSchedules(
+  busType: 'express' | 'intercity',
+  departure: string,
+  arrival: string,
+  minHour = 0
+): BusSchedule[] {
+  const meta = DESTINATION_META[arrival] || {
+    durationMinutes: 80,
+    durationLabel: '1시간 20분',
+    baseFee: 7800,
+    platform: busType === 'express' ? '7번 홈' : '11번 홈',
+    companies: ['동양고속', '충남고속'],
+  };
+
+  const grades: ('우등' | '일반' | '프리미엄')[] = ['우등', '일반', '우등', '프리미엄', '우등'];
+
+  return DEPARTURE_TIMES_FULL_DAY.filter((timeStr) => {
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m >= minHour * 60;
+  }).map((timeStr, idx) => {
+    const [h, m] = timeStr.split(':').map(Number);
+    const depMinutes = h * 60 + m;
+    const arrTimeStr = minutesToHhmm(depMinutes + meta.durationMinutes);
+    const grade = timeStr === '18:00' ? '우등' : timeStr === '18:30' ? '프리미엄' : grades[idx % grades.length];
+    const fee =
+      grade === '프리미엄'
+        ? Math.round((meta.baseFee * 1.43) / 100) * 100
+        : grade === '일반'
+        ? Math.round((meta.baseFee * 0.75) / 100) * 100
+        : meta.baseFee;
+    const totalSeats = grade === '프리미엄' ? 21 : grade === '일반' ? 45 : 28;
+    const remainingSeats = Math.max(3, ((idx * 5 + 7) % (totalSeats - 4)) + 3);
+    const company = meta.companies[idx % meta.companies.length];
+
+    const id =
+      arrival === '서울경부' && timeStr === '18:00'
+        ? 'exp-103'
+        : `${busType}-${arrival}-${timeStr.replace(':', '')}`;
+
+    return {
+      id,
+      busType,
+      departureStation: departure,
+      arrivalStation: arrival,
+      departureTime: timeStr,
+      arrivalTime: arrTimeStr,
+      duration: meta.durationLabel,
+      grade,
+      company,
+      fee,
+      totalSeats,
+      remainingSeats,
+      platform: meta.platform,
+    };
+  });
 }
 
 // ==========================================

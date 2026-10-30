@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { BusGrade, BusSchedule, BusType, SeatPassenger, Ticket } from '@/types';
-import { mockBusSchedules } from '@/mock/data';
+import { getBusSchedules } from '@/mock/data';
 import { TopAppBar } from '../common/TopAppBar';
 import { BusSearchForm } from './BusSearchForm';
 import { BusScheduleCard } from './BusScheduleCard';
@@ -12,6 +12,7 @@ import { BookingConfirmModal } from './BookingConfirmModal';
 import { PaymentModal } from './PaymentModal';
 import { BookingSuccessModal } from './BookingSuccessModal';
 import { emptyPassengerState } from '@/lib/utils';
+import { Clock } from 'lucide-react';
 
 export const BookingView: React.FC = () => {
   const {
@@ -19,7 +20,6 @@ export const BookingView: React.FC = () => {
     bookingPreset,
     setBookingPreset,
     bookBusTicket,
-    activeTicket,
   } = useApp();
 
   const [step, setStep] = useState<'search' | 'results' | 'seats'>('search');
@@ -28,6 +28,7 @@ export const BookingView: React.FC = () => {
     departure: '천안',
     arrival: '서울경부',
     date: '2026-10-30 (금)',
+    departureHour: 17,
   });
 
   // 조회 결과 필터
@@ -42,26 +43,39 @@ export const BookingView: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [completedTicket, setCompletedTicket] = useState<Ticket | null>(null);
 
-  // AI 프리셋 감지 시 자동 검색 결과 화면으로 이동
+  // 홈 화면 예매 폼 또는 AI 프리셋 감지 시 자동 검색 결과 화면으로 이동
   useEffect(() => {
     if (bookingPreset) {
       setBusType(bookingPreset.busType);
+      const parsedHour =
+        typeof bookingPreset.departureHour === 'number'
+          ? bookingPreset.departureHour
+          : bookingPreset.time
+          ? parseInt(bookingPreset.time.split(':')[0], 10) || 17
+          : 17;
       setSearchCriteria((prev) => ({
         ...prev,
         departure: bookingPreset.departure,
         arrival: bookingPreset.arrival,
+        date: bookingPreset.date || prev.date,
+        departureHour: parsedHour,
       }));
       setStep('results');
       setBookingPreset(null);
     }
   }, [bookingPreset, setBookingPreset]);
 
-  // 스케줄 필터링
-  const filteredSchedules = mockBusSchedules.filter((s) => {
-    const matchType = s.busType === busType;
-    const matchGrade = selectedGrade === '전체' || s.grade === selectedGrade;
-    return matchType && matchGrade;
-  });
+  // 선택된 도착지 및 출발 시간(00시~24시) 이후 버스만 필터링
+  const allRouteSchedules = getBusSchedules(
+    busType,
+    searchCriteria.departure,
+    searchCriteria.arrival,
+    searchCriteria.departureHour
+  );
+
+  const filteredSchedules = allRouteSchedules.filter(
+    (s) => selectedGrade === '전체' || s.grade === selectedGrade
+  );
 
   // 좌석별 탑승 유형에서 집계한 승객 구성과 총 요금
   const passengers = selectedSeats.reduce((acc, s) => {
@@ -74,6 +88,7 @@ export const BookingView: React.FC = () => {
     departure: string;
     arrival: string;
     date: string;
+    departureHour: number;
   }) => {
     setSearchCriteria(criteria);
     setStep('results');
@@ -113,7 +128,7 @@ export const BookingView: React.FC = () => {
           step === 'search'
             ? '버스 예매'
             : step === 'results'
-            ? `${searchCriteria.departure} 출발 ${busType === 'express' ? '고속' : '시외'}버스`
+            ? `${searchCriteria.departure} → ${searchCriteria.arrival}`
             : '좌석 선택'
         }
         showBack={step !== 'search'}
@@ -132,6 +147,8 @@ export const BookingView: React.FC = () => {
             onSearch={handleSearchSubmit}
             initialDeparture={searchCriteria.departure}
             initialArrival={searchCriteria.arrival}
+            initialDate={searchCriteria.date}
+            initialDepartureHour={searchCriteria.departureHour}
           />
 
           {/* 안내 배너 */}
@@ -150,16 +167,25 @@ export const BookingView: React.FC = () => {
       {step === 'results' && (
         <div className="flex-1 flex flex-col p-4 space-y-3 pb-8">
           {/* Header Bar */}
-          <div className="bg-white p-3.5 rounded-2xl border border-[#EEF2F6] flex items-center justify-between shadow-xs">
-            <div>
-              <span className="text-[11px] text-[#64748B] block font-medium">{searchCriteria.date}</span>
-              <span className="text-sm font-extrabold text-[#0F172A]">
-                총 {filteredSchedules.length}개의 운행 편
+          <div className="bg-white p-3.5 rounded-2xl border border-[#EEF2F6] flex items-center justify-between shadow-xs gap-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] text-[#64748B] font-semibold whitespace-nowrap">
+                  {searchCriteria.date}
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-[#2563EB] bg-[#EFF6FF] px-2 py-0.5 rounded-full whitespace-nowrap">
+                  <Clock className="w-3 h-3" />
+                  {String(searchCriteria.departureHour).padStart(2, '0')}시 이후 출발
+                </span>
+              </div>
+              <span className="text-sm font-extrabold text-[#0F172A] block mt-0.5">
+                {searchCriteria.departure} → {searchCriteria.arrival} ({filteredSchedules.length}편)
               </span>
             </div>
             <button
+              type="button"
               onClick={() => setStep('search')}
-              className="text-xs text-[#2563EB] font-bold px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] transition-colors"
+              className="text-xs text-[#2563EB] font-bold px-3 py-1.5 rounded-xl bg-[#EFF6FF] hover:bg-[#DBEAFE] transition-colors whitespace-nowrap shrink-0"
             >
               조건 변경
             </button>
@@ -170,8 +196,9 @@ export const BookingView: React.FC = () => {
             {(['전체', '우등', '프리미엄', '일반'] as const).map((grade) => (
               <button
                 key={grade}
+                type="button"
                 onClick={() => setSelectedGrade(grade)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                   selectedGrade === grade
                     ? 'bg-[#132B45] text-white shadow-xs'
                     : 'bg-white text-[#64748B] border border-[#CBD5E1] hover:text-[#0F172A]'
@@ -183,19 +210,30 @@ export const BookingView: React.FC = () => {
           </div>
 
           {/* Schedules List */}
-          <div className="space-y-2.5">
-            {filteredSchedules.map((schedule) => {
-              const isAiTarget = schedule.id === 'exp-103'; // 18:00 버스
-              return (
-                <BusScheduleCard
-                  key={schedule.id}
-                  schedule={schedule}
-                  onSelect={handleSelectSchedule}
-                  isAiRecommended={isAiTarget}
-                />
-              );
-            })}
-          </div>
+          {filteredSchedules.length === 0 ? (
+            <div className="bg-white rounded-3xl p-8 text-center border border-[#EEF2F6] space-y-2">
+              <p className="text-sm font-extrabold text-[#0F172A]">
+                선택하신 조건의 운행 버스가 없습니다.
+              </p>
+              <p className="text-xs text-[#64748B]">
+                출발 시간을 앞당기거나 버스 등급 필터를 &apos;전체&apos;로 변경해 보세요.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {filteredSchedules.map((schedule) => {
+                const isAiTarget = schedule.id === 'exp-103'; // 18:00 버스
+                return (
+                  <BusScheduleCard
+                    key={schedule.id}
+                    schedule={schedule}
+                    onSelect={handleSelectSchedule}
+                    isAiRecommended={isAiTarget}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 

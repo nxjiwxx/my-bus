@@ -150,9 +150,18 @@ interface AppContextType {
     arrival: string;
     busType: 'express' | 'intercity';
     time?: string;
+    date?: string;
+    departureHour?: number;
   } | null;
   setBookingPreset: (
-    preset: { departure: string; arrival: string; busType: 'express' | 'intercity'; time?: string } | null
+    preset: {
+      departure: string;
+      arrival: string;
+      busType: 'express' | 'intercity';
+      time?: string;
+      date?: string;
+      departureHour?: number;
+    } | null
   ) => void;
 
   // ==========================================
@@ -204,6 +213,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     arrival: string;
     busType: 'express' | 'intercity';
     time?: string;
+    date?: string;
+    departureHour?: number;
   } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
