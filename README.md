@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚌 My Bus - 천안시 종합버스터미널 AI 맞춤형 예매 앱
 
-## Getting Started
+> **Reliable Mobility, Personalized Experience**  
+> 천안종합버스터미널을 정기적으로 이용하는 대학생과 직장인을 위한 AI 기반 개인 맞춤형 고속·시외버스 예매 및 실시간 교통 일정 관리 서비스
 
-First, run the development server:
+---
+
+## 📱 프로젝트 개요
+
+- **타깃 사용자**: 천안종합버스터미널을 주 1회 이상 정기적으로 이용하는 대학생(상명대, 단국대, 호서대, 백석대 등) 및 서울·경기 통근 직장인, 일반 이용자
+- **기준 해상도**: **393 × 852px** (iPhone 16 / 15 Pro 규격 모바일 퍼스트 프레임)
+- **주요 노선**: 천안 ↔ 서울경부 (고속), 천안 ↔ 동서울/수원/인천 (시외)
+- **기술 스택**:
+  - **Framework**: Next.js 16 (App Router)
+  - **Language**: TypeScript
+  - **Styling**: Tailwind CSS (Material 3 HCT 기반 맞춤 디자인 토큰)
+  - **Icons**: Lucide Icons
+  - **Interactions**: canvas-confetti, Context API 기반 실시간 시뮬레이션 머신
+
+---
+
+## 🎨 컬러 시스템 (Design Tokens)
+
+| 카테고리 | 토큰 이름 | 코드 / 색상 | 주요 용도 |
+|---|---|---|---|
+| **Primary** | `Primary / P-20` | `#132B45` | 메인 브랜드 딥 컬러, 주요 버튼, 헤더 |
+| | `On Primary / P-100` | `#FFFFFF` | 프라이머리 위 텍스트/아이콘 |
+| | `Primary Container / P-80` | `#E1EDFB` | 프라이머리 연한 배경 컨테이너 |
+| | `On Primary Container / P-30` | `#17365D` | 컨테이너 위 강조 텍스트 |
+| **Service Express** | `Service Express / 50` | `#2563EB` | **고속버스** 전용 식별 블루, 뱃지, 테두리 |
+| | `On Express / 100` | `#FFFFFF` | 고속버스 버튼/배지 텍스트 |
+| **Service Intercity**| `Service Intercity / 50` | `#059669` | **시외버스** 전용 식별 그린, 뱃지, 테두리 |
+| | `On Intercity / 100` | `#FFFFFF` | 시외버스 버튼/배지 텍스트 |
+| **Error** | `Error / E-40` | `#DC2626` | 오류, 취소 경고 |
+| **Neutral & Surface**| `N-10` ~ `N-100` | M3 서피스 계층 | 카드 배경, 테두리, 구분선, 모바일 프레임 |
+
+---
+
+## 🚀 실행 방법
 
 ```bash
+# 1. 의존성 설치
+npm install
+
+# 2. 개발 서버 시작 (포트 3000)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# 3. 프로덕션 빌드
+npm run build
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 `http://localhost:3000` 접속 시:
+- **데스크톱**: 중앙에 iOS 16 스마트폰 프레임과 좌측 개요 패널, 우측 **"AI 상황 시뮬레이터 제어 패널"**이 함께 표시됩니다.
+- **모바일**: 화면 100% 뷰포트를 사용하는 네이티브 앱 형태로 동작합니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌟 핵심 기능 및 시나리오 검증 안내
 
-## Learn More
+### 1. AI 상황 시뮬레이터 (우측 패널)
+평가자가 원클릭으로 6가지 핵심 상태를 전환하며 테스트할 수 있습니다:
+- **STATE 01. 예매 전**: AI가 지난 금요일 이용 패턴을 감지하여 18시대 서울경부행 버스 예매를 능동적으로 제안 (`[버스 조회하기]` 클릭 시 자동 입력 이동).
+- **STATE 02. 예매 완료 (기본)**: 18:00 버스 출발 기준, 대학교 출발 **권장 출발시간 17:10** 하이라이트 안내.
+- **STATE 03-A. 교통 정체 발생**: 이동시간 15분 증가 감지 → 권장 출발시간 **16:55**로 실시간 재계산 및 변경 확인 카드.
+- **STATE 03-B. 버스 운행시간 지연**: 도로 사정으로 공식 버스 출발이 18:00 → 18:20으로 변경 → 일정 재계산.
+- **STATE 04. 터미널 이동 중**: 400번 시내버스 탑승 중 실시간 프로그레스 바 및 18분 후 도착 카운트다운.
+- **STATE 05. 터미널 도착 완료**: 천안터미널 도착 시 승차홈 **7번 홈** 안내 및 모바일 승차권 QR 자동 제시.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. 고속·시외버스 스마트 예매 흐름
+1. 고속버스(블루) / 시외버스(그린) 원터치 토글
+2. 천안 ↔ 전국 주요 터미널 선택 바텀시트 모달
+3. 날짜 및 인원(성인, 중고생, 아동) 선택 모달
+4. 버스 시간표 조회 (등급별 필터: 우등, 프리미엄, 일반)
+5. 28인승 우등 좌석 배치도에서 좌석 직접 선택 (7번 단독석 자동 추천)
+6. 예매 정보 확인 및 간편결제(네이버페이, 카카오페이, 토스페이 등) 시뮬레이션
+7. 예매 완료 축하 효과 및 AI 이동 일정 자동 등록 안내
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. 내 승차권 관리
+- 고화질 모바일 탑승권 (바코드, QR코드 전체화면 스캐너 모달)
+- 승차홈(7번), 좌석(7번), 버스회사(동양고속) 상세 정보
+- 예매 취소 모달 (출발 1시간 전 수수료 0원 환불 정책 시뮬레이션)
+- 지난 예매 내역 히스토리
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 4. 마이페이지 & 이동 루틴 관리
+- AI 자동 패턴 학습 등록 제안 배너 ("최근 일요일 저녁마다 복귀... 루틴 등록할까요?")
+- 나의 이동 루틴 카드 (활성화/일시중지 토글, 삭제)
+- 이동 루틴 신규 등록 모달 (출발지, 목적지, 요일, 선호시간, 캠퍼스 출발지, 교통수단)
+- AI 알림 및 정밀 위치 권한 토글 설정
