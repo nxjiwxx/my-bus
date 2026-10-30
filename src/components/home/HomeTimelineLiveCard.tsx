@@ -42,7 +42,7 @@ export const HomeTimelineLiveCard: React.FC = () => {
     const boardingItem = customTimeline.items.find((it) => it.isBoardingStep);
 
     return (
-      <div className="bg-gradient-to-br from-[#1E293B] to-[#0F172A] text-white rounded-3xl p-4.5 shadow-md border border-white/10 space-y-3 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#1E293B] to-[#0F172A] text-white rounded-3xl p-4 shadow-md border border-white/10 space-y-3 relative overflow-hidden">
         {/* Ambient background accent */}
         <div className="absolute -top-10 -right-10 w-28 h-28 bg-[#6366F1]/25 rounded-full blur-xl pointer-events-none" />
 
@@ -88,42 +88,38 @@ export const HomeTimelineLiveCard: React.FC = () => {
           </div>
         </div>
 
-        {/* 현재 활동 및 실시간 동선 안내 */}
-        <div className="p-3 bg-white/10 rounded-2xl border border-white/10 space-y-1.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold bg-[#6366F1] text-white px-2 py-0.5 rounded-full">
-              현재 일정 ({activeIdx + 1}/{customTimeline.items.length})
+        {/* 현재 · 다음 · 탑승 준비 (세로 정보 리스트) */}
+        <ul className="rounded-2xl bg-white/10 border border-white/10 divide-y divide-white/10">
+          <li className="px-3.5 py-3 space-y-1">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] font-extrabold bg-[#6366F1] text-white px-2 py-0.5 rounded-full whitespace-nowrap">
+                지금 · {activeIdx + 1}/{customTimeline.items.length}
+              </span>
+              <span className="text-[11px] font-bold text-[#93C5FD] whitespace-nowrap">
+                {current?.startTime} ~ {current?.endTime}
+              </span>
+            </div>
+            <h4 className="text-sm font-black text-white tracking-tight leading-snug">
+              {current?.title || '교보문고 천안점'}
+            </h4>
+            <p className="text-[11px] text-white/75 flex items-start gap-1 leading-snug">
+              <Navigation className="w-3 h-3 text-[#6EE7B7] shrink-0 mt-0.5" />
+              <span>{current?.routeInstruction}</span>
+            </p>
+          </li>
+          <li className="px-3.5 py-2.5 flex items-center justify-between gap-3">
+            <span className="text-[10px] font-bold text-white/60 whitespace-nowrap">다음 일정</span>
+            <span className="text-[11px] font-bold text-white text-right leading-snug">
+              {next ? `${next.title.split(' ')[0]} · 도보 ${current.transitTimeToNext}분` : '승차홈 대기'}
             </span>
-            <span className="text-xs font-bold text-[#93C5FD]">
-              {current?.startTime} ~ {current?.endTime}
+          </li>
+          <li className="px-3.5 py-2.5 flex items-center justify-between gap-3">
+            <span className="text-[10px] font-bold text-white/60 whitespace-nowrap">탑승 준비</span>
+            <span className="text-[11px] font-bold text-[#6EE7B7] text-right leading-snug">
+              {boardingItem?.startTime || '17:44'} {customTimeline.boardingPlatform} 이동
             </span>
-          </div>
-          <h4 className="text-sm font-black text-white tracking-tight">
-            {current?.title || '교보문고 천안점'}
-          </h4>
-          <p className="text-[11px] text-white/80 flex items-center gap-1">
-            <Navigation className="w-3 h-3 text-[#6EE7B7] shrink-0" />
-            <span className="truncate">{current?.routeInstruction}</span>
-          </p>
-        </div>
-
-        {/* 다음 일정 & 탑승까지 남은 시간 요약 */}
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="p-2.5 bg-white/5 rounded-xl border border-white/10">
-            <span className="text-[10px] text-white/60 block mb-0.5">다음 일정 안내</span>
-            <span className="font-bold text-white text-[11px] truncate block">
-              {next ? `${next.title.split(' ')[0]} (도보 ${current.transitTimeToNext}분)` : '승차홈 대기'}
-            </span>
-          </div>
-          <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 text-right">
-            <span className="text-[10px] text-white/60 block mb-0.5">
-              탑승 준비 ({customTimeline.boardingPlatform})
-            </span>
-            <span className="font-bold text-[#6EE7B7] text-[11px] block">
-              {boardingItem?.startTime || '17:44'} 이동 (여유 {customTimeline.actualBufferMinutes}분)
-            </span>
-          </div>
-        </div>
+          </li>
+        </ul>
 
         {/* 액션 버튼: 다음 구간 전환 / 상세 길 안내 페이지 이동 */}
         <div className="flex items-center gap-2">

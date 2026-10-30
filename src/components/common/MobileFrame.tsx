@@ -32,7 +32,7 @@ export const MobileFrame: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#E2E8F0] flex flex-col md:flex-row items-center justify-center p-0 md:p-6 lg:p-10 text-[#0F172A]">
+    <div className="min-h-screen bg-[#E2E8F0] flex flex-col md:flex-row items-center justify-center p-0 md:p-4 text-[#0F172A]">
       {/* 데스크톱 왼쪽 안내 패널 (데스크톱 전용) */}
       <div className="hidden xl:flex flex-col gap-4 max-w-xs mr-8 text-left">
         <div className="bg-white/90 backdrop-blur-md p-5 rounded-3xl border border-[#CBD5E1] shadow-lg">
@@ -50,7 +50,7 @@ export const MobileFrame: React.FC<{ children: React.ReactNode }> = ({ children 
           <div className="mt-4 pt-3 border-t border-[#EEF2F6] space-y-2 text-xs">
             <div className="flex items-center justify-between text-[#64748B]">
               <span>기준 해상도</span>
-              <span className="font-semibold text-[#0F172A]">393 × 852 px</span>
+              <span className="font-semibold text-[#0F172A]">375 × 812 px</span>
             </div>
             <div className="flex items-center justify-between text-[#64748B]">
               <span>타깃 사용자</span>
@@ -80,7 +80,11 @@ export const MobileFrame: React.FC<{ children: React.ReactNode }> = ({ children 
       </div>
 
       {/* 스마트폰 목업 프레임 */}
-      <div className="w-full md:w-[393px] h-screen md:h-[852px] bg-white md:rounded-[52px] overflow-hidden flex flex-col relative mobile-frame-shadow md:border-[10px] md:border-[#1E293B]">
+      {/* 일반적인 스마트폰 화면 크기(375 × 812)에 맞춘 프레임. transform으로 모달·시트가 프레임 안에 갇히도록 함 */}
+      <div
+        className="w-full md:w-[391px] h-[100dvh] md:h-[min(828px,calc(100dvh-32px))] shrink-0 bg-white md:rounded-[44px] overflow-hidden flex flex-col relative mobile-frame-shadow md:border-8 md:border-[#1E293B]"
+        style={{ transform: 'translateZ(0)' }}
+      >
         {/* iOS 상태바 (데스크톱 및 모바일 상단) */}
         <div className="h-11 bg-white select-none shrink-0 flex items-center justify-between px-7 pt-2 text-[#0F172A] z-40">
           <span className="text-[14px] font-semibold tracking-tight">{currentTime}</span>
@@ -109,12 +113,12 @@ export const MobileFrame: React.FC<{ children: React.ReactNode }> = ({ children 
       </div>
 
       {/* 데스크톱 오른쪽 시뮬레이터 패널 (화면이 클 때 고정 표시) */}
-      <div className="hidden md:flex flex-col max-w-sm ml-8 self-center">
+      <div className="hidden lg:flex flex-col max-w-sm ml-8 self-center">
         <SimulationController />
       </div>
 
       {/* 모바일 화면에서 열 수 있는 플로팅 시뮬레이터 버튼 */}
-      <div className="md:hidden fixed bottom-18 right-4 z-50">
+      <div className="lg:hidden fixed bottom-20 right-4 z-[70]">
         <button
           onClick={() => setShowSimModal(!showSimModal)}
           className="bg-[#132B45] text-white p-3 rounded-full shadow-2xl flex items-center gap-2 text-xs font-bold border border-white/20 active:scale-95 transition-transform"
@@ -124,7 +128,7 @@ export const MobileFrame: React.FC<{ children: React.ReactNode }> = ({ children 
         </button>
 
         {showSimModal && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center p-3">
+          <div className="fixed inset-0 bg-black/50 z-[80] flex items-end justify-center p-3">
             <div className="w-full max-w-md bg-white rounded-3xl p-2 pb-6 animate-in slide-in-from-bottom-5">
               <div className="flex justify-end p-2">
                 <button

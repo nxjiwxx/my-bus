@@ -39,8 +39,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/40 backdrop-blur-xs">
-      <div className="bg-white rounded-t-3xl md:rounded-3xl w-full max-w-sm p-5 shadow-2xl border border-[#CBD5E1] animate-in slide-in-from-bottom-5 space-y-4">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-xs">
+      <div className="bg-white rounded-t-3xl w-full max-w-sm p-5 shadow-2xl border border-[#CBD5E1] animate-in slide-in-from-bottom-5 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-[#EEF2F6]">
           <div className="flex items-center gap-2">

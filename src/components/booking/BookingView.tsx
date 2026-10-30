@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
-import { BusGrade, BusSchedule, BusType, Ticket } from '@/types';
+import { BusGrade, BusSchedule, BusType, SeatPassenger, Ticket } from '@/types';
 import { mockBusSchedules } from '@/mock/data';
 import { TopAppBar } from '../common/TopAppBar';
 import { BusSearchForm } from './BusSearchForm';
@@ -11,8 +11,7 @@ import { SeatSelector } from './SeatSelector';
 import { BookingConfirmModal } from './BookingConfirmModal';
 import { PaymentModal } from './PaymentModal';
 import { BookingSuccessModal } from './BookingSuccessModal';
-import { PassengerState } from './PassengerModal';
-import { Filter, ArrowUpDown } from 'lucide-react';
+import { emptyPassengerState } from '@/lib/utils';
 
 export const BookingView: React.FC = () => {
   const {
@@ -29,7 +28,6 @@ export const BookingView: React.FC = () => {
     departure: '천안',
     arrival: '서울경부',
     date: '2026-10-30 (금)',
-    passengers: { adult: 1, teen: 0, child: 0 } as PassengerState,
   });
 
   // 조회 결과 필터
@@ -37,7 +35,7 @@ export const BookingView: React.FC = () => {
 
   // 좌석 및 결제 진행 상태
   const [selectedSchedule, setSelectedSchedule] = useState<BusSchedule | null>(null);
-  const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
+  const [selectedSeats, setSelectedSeats] = useState<SeatPassenger[]>([]);
 
   // 모달 제어
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -65,11 +63,17 @@ export const BookingView: React.FC = () => {
     return matchType && matchGrade;
   });
 
+  // 좌석별 탑승 유형에서 집계한 승객 구성과 총 요금
+  const passengers = selectedSeats.reduce((acc, s) => {
+    acc[s.type] += 1;
+    return acc;
+  }, emptyPassengerState());
+  const totalFee = selectedSeats.reduce((sum, s) => sum + s.fare, 0);
+
   const handleSearchSubmit = (criteria: {
     departure: string;
     arrival: string;
     date: string;
-    passengers: PassengerState;
   }) => {
     setSearchCriteria(criteria);
     setStep('results');
@@ -80,7 +84,7 @@ export const BookingView: React.FC = () => {
     setStep('seats');
   };
 
-  const handleConfirmSeats = (seats: number[]) => {
+  const handleConfirmSeats = (seats: SeatPassenger[]) => {
     setSelectedSeats(seats);
     setIsConfirmModalOpen(true);
   };
@@ -93,11 +97,10 @@ export const BookingView: React.FC = () => {
   const handlePaymentSuccess = () => {
     if (!selectedSchedule) return;
     setIsPaymentModalOpen(false);
-    const totalFee = selectedSchedule.fee * selectedSeats.length;
     const newTicket = bookBusTicket(
       selectedSchedule,
-      selectedSeats,
-      searchCriteria.passengers,
+      selectedSeats.map((s) => s.seatNumber),
+      passengers,
       totalFee
     );
     setCompletedTicket(newTicket);
@@ -110,7 +113,7 @@ export const BookingView: React.FC = () => {
           step === 'search'
             ? '버스 예매'
             : step === 'results'
-            ? `${searchCriteria.departure} → ${searchCriteria.arrival}`
+            ? `${searchCriteria.departure} 출발 ${busType === 'express' ? '고속' : '시외'}버스`
             : '좌석 선택'
         }
         showBack={step !== 'search'}
@@ -134,8 +137,8 @@ export const BookingView: React.FC = () => {
           {/* 안내 배너 */}
           <div className="p-4 rounded-3xl bg-white border border-[#EEF2F6] text-xs space-y-2">
             <h4 className="font-extrabold text-[#0F172A]">천안종합버스터미널 예매 안내</h4>
-            <ul className="space-y-1 text-[#64748B] text-[11px] list-disc list-inside">
-              <li>고속버스는 모바일 승차권 QR코드로 검표원 또는 단말기에 직접 태그할 수 있습니다.</li>
+            <ul className="space-y-1 text-[#64748B] text-[11px] list-disc pl-4 leading-relaxed">
+              <li>고속버스는 모바일 승차권 QR코드로 검표원 또는 단말기에 태그할 수 있습니다.</li>
               <li>출발 1시간 전까지는 취소 수수료가 전액 면제됩니다.</li>
               <li>AI 이동 비서가 터미널 이동 소요시간과 권장 출발시간을 자동으로 안내합니다.</li>
             </ul>
@@ -200,11 +203,6 @@ export const BookingView: React.FC = () => {
       {step === 'seats' && selectedSchedule && (
         <SeatSelector
           schedule={selectedSchedule}
-          passengerCount={
-            searchCriteria.passengers.adult +
-            searchCriteria.passengers.teen +
-            searchCriteria.passengers.child
-          }
           onConfirm={handleConfirmSeats}
           onBack={() => setStep('results')}
         />
@@ -219,7 +217,7 @@ export const BookingView: React.FC = () => {
           schedule={selectedSchedule}
           seats={selectedSeats}
           date={searchCriteria.date}
-          passengers={searchCriteria.passengers}
+          totalFee={totalFee}
         />
       )}
 
@@ -229,7 +227,7 @@ export const BookingView: React.FC = () => {
           isOpen={isPaymentModalOpen}
           onClose={() => setIsPaymentModalOpen(false)}
           onSuccess={handlePaymentSuccess}
-          totalFee={selectedSchedule.fee * selectedSeats.length}
+          totalFee={totalFee}
         />
       )}
 

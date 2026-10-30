@@ -1,21 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowLeftRight, Calendar, Users, MapPin, Search } from 'lucide-react';
+import { Calendar, Search, ArrowDown, Info } from 'lucide-react';
 import { BusType } from '@/types';
-import { StationSelectModal } from './StationSelectModal';
 import { DateSelectModal } from './DateSelectModal';
-import { PassengerModal, PassengerState } from './PassengerModal';
 
 interface BusSearchFormProps {
   busType: BusType;
   onBusTypeChange: (type: BusType) => void;
-  onSearch: (criteria: {
-    departure: string;
-    arrival: string;
-    date: string;
-    passengers: PassengerState;
-  }) => void;
+  onSearch: (criteria: { departure: string; arrival: string; date: string }) => void;
   initialDeparture?: string;
   initialArrival?: string;
 }
@@ -27,187 +20,108 @@ export const BusSearchForm: React.FC<BusSearchFormProps> = ({
   initialDeparture = '천안',
   initialArrival = '서울경부',
 }) => {
-  const [departure, setDeparture] = useState(initialDeparture);
-  const [arrival, setArrival] = useState(initialArrival);
   const [date, setDate] = useState('2026-10-30 (금)');
-  const [passengers, setPassengers] = useState<PassengerState>({
-    adult: 1,
-    teen: 0,
-    child: 0,
-  });
-
-  // Modal open states
-  const [stationModalType, setStationModalType] = useState<'departure' | 'arrival' | null>(null);
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
-  const [isPassengerModalOpen, setIsPassengerModalOpen] = useState(false);
 
-  const swapStations = () => {
-    const temp = departure;
-    setDeparture(arrival);
-    setArrival(temp);
-  };
-
-  const totalPassengers = passengers.adult + passengers.teen + passengers.child;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch({
-      departure,
-      arrival,
-      date,
-      passengers,
-    });
-  };
+  // 출발지·도착지는 변경할 수 없으며 천안종합버스터미널 출발 노선으로 고정
+  const arrivalLabel = busType === 'express' ? initialArrival : '동서울 · 수원 방면';
 
   return (
-    <div className="bg-white rounded-3xl p-5 shadow-sm border border-[#EEF2F6] space-y-4">
-      {/* 1. Bus Type Toggle: Express (Blue) vs Intercity (Green) */}
-      <div className="flex p-1 bg-[#F1F5F9] rounded-2xl">
-        <button
-          type="button"
-          onClick={() => onBusTypeChange('express')}
-          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
-            busType === 'express'
-              ? 'bg-[#2563EB] text-white shadow-sm'
-              : 'text-[#64748B] hover:text-[#0F172A]'
-          }`}
-        >
-          고속버스 (Express)
-        </button>
-        <button
-          type="button"
-          onClick={() => onBusTypeChange('intercity')}
-          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
-            busType === 'intercity'
-              ? 'bg-[#059669] text-white shadow-sm'
-              : 'text-[#64748B] hover:text-[#0F172A]'
-          }`}
-        >
-          시외버스 (Intercity)
-        </button>
-      </div>
-
-      {/* 2. Stations Route Selector */}
-      <div className="relative bg-[#F8FAFC] rounded-2xl p-3 border border-[#EEF2F6] space-y-2">
-        {/* Departure */}
-        <button
-          type="button"
-          onClick={() => setStationModalType('departure')}
-          className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-white transition-colors text-left"
-        >
-          <div>
-            <span className="text-[10px] text-[#64748B] block font-semibold">출발지</span>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-base font-extrabold text-[#0F172A]">{departure}</span>
-              {departure === '천안' && (
-                <span className="text-[10px] bg-[#EEF2F6] text-[#475569] px-1.5 py-0.5 rounded font-medium">
-                  천안종합터미널
-                </span>
-              )}
-            </div>
-          </div>
-          <span className="text-xs text-[#2563EB] font-semibold">변경</span>
-        </button>
-
-        {/* Swap Button */}
-        <div className="absolute right-5 top-1/2 -translate-y-1/2 z-10">
+    <div className="bg-white rounded-3xl p-5 shadow-sm border border-[#EEF2F6] space-y-5">
+      {/* 1. 버스 종류 */}
+      <div className="space-y-2">
+        <span className="text-[11px] font-bold text-[#64748B]">버스 종류</span>
+        <div className="flex p-1 bg-[#F1F5F9] rounded-2xl">
           <button
             type="button"
-            onClick={swapStations}
-            className="w-8 h-8 rounded-full bg-white shadow-md border border-[#E2E8F0] flex items-center justify-center text-[#475569] hover:text-[#0F172A] active:rotate-180 transition-all duration-300"
-            aria-label="출발지 도착지 교환"
+            onClick={() => onBusTypeChange('express')}
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+              busType === 'express'
+                ? 'bg-[#2563EB] text-white shadow-sm'
+                : 'text-[#64748B] hover:text-[#0F172A]'
+            }`}
           >
-            <ArrowLeftRight className="w-3.5 h-3.5" />
+            고속버스
+          </button>
+          <button
+            type="button"
+            onClick={() => onBusTypeChange('intercity')}
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+              busType === 'intercity'
+                ? 'bg-[#059669] text-white shadow-sm'
+                : 'text-[#64748B] hover:text-[#0F172A]'
+            }`}
+          >
+            시외버스
           </button>
         </div>
-
-        <div className="border-t border-[#E2E8F0]" />
-
-        {/* Arrival */}
-        <button
-          type="button"
-          onClick={() => setStationModalType('arrival')}
-          className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-white transition-colors text-left"
-        >
-          <div>
-            <span className="text-[10px] text-[#64748B] block font-semibold">도착지</span>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-base font-extrabold text-[#0F172A]">{arrival}</span>
-            </div>
-          </div>
-          <span className="text-xs text-[#2563EB] font-semibold">변경</span>
-        </button>
       </div>
 
-      {/* 3. Date & Passenger Selectors */}
-      <div className="grid grid-cols-2 gap-2.5">
-        {/* Date */}
+      {/* 2. 운행 노선 (변경 불가, 읽기 전용) */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-bold text-[#64748B]">운행 노선</span>
+          <span className="text-[10px] font-semibold text-[#94A3B8] whitespace-nowrap">출발지 · 도착지 고정</span>
+        </div>
+        <div className="rounded-2xl bg-[#F8FAFC] border border-[#EEF2F6] divide-y divide-[#E2E8F0]">
+          <div className="px-4 py-3">
+            <span className="text-[10px] font-semibold text-[#64748B] block">출발</span>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-base font-extrabold text-[#0F172A]">{initialDeparture}</span>
+              <span className="text-[10px] bg-[#EEF2F6] text-[#475569] px-1.5 py-0.5 rounded font-medium whitespace-nowrap">
+                천안종합버스터미널
+              </span>
+            </div>
+          </div>
+          <div className="px-4 py-3 relative">
+            <div className="absolute -top-2.5 left-4 w-5 h-5 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center text-[#94A3B8]">
+              <ArrowDown className="w-3 h-3" />
+            </div>
+            <span className="text-[10px] font-semibold text-[#64748B] block">도착</span>
+            <span className="text-base font-extrabold text-[#0F172A] block mt-0.5">{arrivalLabel}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. 가는 날 */}
+      <div className="space-y-2">
+        <span className="text-[11px] font-bold text-[#64748B]">가는 날</span>
         <button
           type="button"
           onClick={() => setIsDateModalOpen(true)}
-          className="p-3 bg-[#F8FAFC] rounded-2xl border border-[#EEF2F6] text-left hover:bg-slate-50 transition-colors"
+          className="w-full px-4 py-3 bg-[#F8FAFC] rounded-2xl border border-[#EEF2F6] text-left hover:bg-slate-50 transition-colors flex items-center justify-between"
         >
-          <div className="flex items-center gap-1 text-[10px] text-[#64748B] font-semibold">
-            <Calendar className="w-3.5 h-3.5 text-[#132B45]" />
-            <span>가는 날</span>
-          </div>
-          <div className="text-xs font-extrabold text-[#0F172A] mt-1 truncate">{date}</div>
-        </button>
-
-        {/* Passengers */}
-        <button
-          type="button"
-          onClick={() => setIsPassengerModalOpen(true)}
-          className="p-3 bg-[#F8FAFC] rounded-2xl border border-[#EEF2F6] text-left hover:bg-slate-50 transition-colors"
-        >
-          <div className="flex items-center gap-1 text-[10px] text-[#64748B] font-semibold">
-            <Users className="w-3.5 h-3.5 text-[#132B45]" />
-            <span>승객 수</span>
-          </div>
-          <div className="text-xs font-extrabold text-[#0F172A] mt-1">
-            총 {totalPassengers}명 {passengers.teen > 0 && `(중고생 ${passengers.teen})`}
-          </div>
+          <span className="flex items-center gap-2 text-sm font-extrabold text-[#0F172A]">
+            <Calendar className="w-4 h-4 text-[#132B45]" />
+            {date}
+          </span>
+          <span className="text-xs text-[#2563EB] font-semibold whitespace-nowrap">변경</span>
         </button>
       </div>
 
-      {/* 4. Search Submit Button */}
+      {/* 인원 안내 */}
+      <div className="p-3 rounded-2xl bg-[#EFF6FF] text-[11px] text-[#1D4ED8] flex items-start gap-2 leading-relaxed">
+        <Info className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+        <span>승객 수와 탑승 유형은 <strong>좌석 선택 단계</strong>에서 좌석별로 지정합니다. (최대 10매)</span>
+      </div>
+
+      {/* 4. 조회 버튼 */}
       <button
         type="button"
-        onClick={handleSubmit}
+        onClick={() => onSearch({ departure: initialDeparture, arrival: initialArrival, date })}
         className={`w-full py-3.5 rounded-2xl text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-md active:scale-98 transition-all ${
-          busType === 'express'
-            ? 'bg-[#2563EB] hover:bg-[#1D4ED8]'
-            : 'bg-[#059669] hover:bg-[#047857]'
+          busType === 'express' ? 'bg-[#2563EB] hover:bg-[#1D4ED8]' : 'bg-[#059669] hover:bg-[#047857]'
         }`}
       >
         <Search className="w-4 h-4" />
         <span>버스 시간표 조회하기</span>
       </button>
 
-      {/* Modals */}
-      <StationSelectModal
-        isOpen={stationModalType !== null}
-        onClose={() => setStationModalType(null)}
-        onSelect={(st) => {
-          if (stationModalType === 'departure') setDeparture(st);
-          if (stationModalType === 'arrival') setArrival(st);
-        }}
-        currentStation={stationModalType === 'departure' ? departure : arrival}
-        type={stationModalType || 'departure'}
-      />
-
       <DateSelectModal
         isOpen={isDateModalOpen}
         onClose={() => setIsDateModalOpen(false)}
         onSelect={(d) => setDate(d)}
         currentDate={date}
-      />
-
-      <PassengerModal
-        isOpen={isPassengerModalOpen}
-        onClose={() => setIsPassengerModalOpen(false)}
-        passengers={passengers}
-        onChange={(p) => setPassengers(p)}
       />
     </div>
   );

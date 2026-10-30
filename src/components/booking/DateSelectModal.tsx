@@ -30,8 +30,8 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/40 backdrop-blur-xs">
-      <div className="bg-white rounded-t-3xl md:rounded-3xl w-full max-w-sm p-4 shadow-2xl border border-[#CBD5E1] animate-in slide-in-from-bottom-5 space-y-3">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-xs">
+      <div className="bg-white rounded-t-3xl w-full max-w-sm p-4 shadow-2xl border border-[#CBD5E1] animate-in slide-in-from-bottom-5 space-y-3">
         <div className="flex items-center justify-between pb-2 border-b border-[#EEF2F6]">
           <div className="flex items-center gap-2">
             <CalendarIcon className="w-4 h-4 text-[#132B45]" />

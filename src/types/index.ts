@@ -25,6 +25,28 @@ export interface BusSchedule {
   platform: string;      // "7번 홈"
 }
 
+// 탑승 유형 (좌석 선택 시 좌석별로 지정)
+export type PassengerType = 'adult' | 'teen' | 'child' | 'veteran';
+
+export type PassengerState = Record<PassengerType, number>;
+
+// 좌석별 탑승 유형 지정 정보
+export interface SeatPassenger {
+  seatNumber: number;
+  type: PassengerType;
+  fare: number;
+  // 보훈 인증 정보 (보훈 선택 시)
+  veteranVerified?: boolean;
+}
+
+// 노선도(경유지) 정보
+export interface RouteStop {
+  name: string;
+  kind: 'origin' | 'via' | 'rest' | 'destination';
+  time: string; // "17:35"
+  note?: string;
+}
+
 export type SeatStatus = 'available' | 'selected' | 'occupied' | 'disabled';
 
 export interface SeatInfo {
@@ -43,6 +65,7 @@ export interface Ticket {
     adult: number;
     teen: number;
     child: number;
+    veteran?: number;
   };
   totalFee: number;
   paymentMethod: string;

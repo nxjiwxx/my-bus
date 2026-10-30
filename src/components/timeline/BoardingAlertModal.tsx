@@ -25,7 +25,7 @@ export const BoardingAlertModal: React.FC<BoardingAlertModalProps> = ({
     timeline.items[Math.min(timeline.currentActivityIndex, timeline.items.length - 1)];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in duration-150">
       <div className="bg-white rounded-3xl w-full max-w-sm p-5 shadow-2xl border border-white/20 text-center space-y-4">
         {/* Animated Bell Header */}
         <div className="w-12 h-12 rounded-full bg-[#ECFDF5] text-[#059669] flex items-center justify-center mx-auto border-2 border-[#A7F3D0] shadow-sm animate-bounce">

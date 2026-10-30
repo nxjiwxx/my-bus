@@ -10,6 +10,26 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  /* 한글 단어 중간에서 줄바꿈되지 않도록 어절 단위로 줄바꿈 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  line-break: strict;
+}
+
+h1, h2, h3, h4, h5 {
+  text-wrap: balance;
+}
+p, li {
+  text-wrap: pretty;
+}
+button {
+  word-break: keep-all;
+}
+input, select, textarea {
+  word-break: normal;
+}
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Custom Scrollbar hide */

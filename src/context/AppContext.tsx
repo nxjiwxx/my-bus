@@ -132,7 +132,7 @@ interface AppContextType {
   bookBusTicket: (
     schedule: BusSchedule,
     seats: number[],
-    passengerCount: { adult: number; teen: number; child: number },
+    passengerCount: { adult: number; teen: number; child: number; veteran?: number },
     totalFee: number
   ) => Ticket;
   cancelActiveTicket: () => void;
@@ -241,7 +241,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const bookBusTicket = (
     schedule: BusSchedule,
     seats: number[],
-    passengerCount: { adult: number; teen: number; child: number },
+    passengerCount: { adult: number; teen: number; child: number; veteran?: number },
     totalFee: number
   ) => {
     const newTicket: Ticket = {

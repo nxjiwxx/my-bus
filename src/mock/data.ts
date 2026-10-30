@@ -1,4 +1,4 @@
-import { BusSchedule, SeatInfo, Station, Ticket, TravelRoutine, UserProfile, TimelinePlace, CustomTimeline } from '@/types';
+import { BusSchedule, RouteStop, SeatInfo, Station, Ticket, TravelRoutine, UserProfile, TimelinePlace, CustomTimeline } from '@/types';
 
 export const mockUser: UserProfile = {
   name: '김지우',
@@ -280,6 +280,57 @@ export function generateInitialSeats(selectedSeat = 7): SeatInfo[] {
   }
 
   return seats;
+}
+
+// ==========================================
+// 노선도(경유지) 목업: 도착지별 경유지와 소요시간 비율
+// ==========================================
+const ROUTE_TEMPLATES: Record<string, { name: string; kind: RouteStop['kind']; ratio: number; note?: string }[]> = {
+  서울경부: [
+    { name: '천안종합버스터미널', kind: 'origin', ratio: 0, note: '출발' },
+    { name: '천안IC', kind: 'via', ratio: 0.1, note: '고속도로 진입' },
+    { name: '안성휴게소', kind: 'rest', ratio: 0.4, note: '통과 (직통)' },
+    { name: '신갈JC', kind: 'via', ratio: 0.7 },
+    { name: '양재IC', kind: 'via', ratio: 0.88 },
+    { name: '서울경부', kind: 'destination', ratio: 1, note: '도착' },
+  ],
+  동서울: [
+    { name: '천안종합버스터미널', kind: 'origin', ratio: 0, note: '출발' },
+    { name: '천안IC', kind: 'via', ratio: 0.1 },
+    { name: '안성IC', kind: 'via', ratio: 0.35 },
+    { name: '용인IC', kind: 'via', ratio: 0.6 },
+    { name: '강변역', kind: 'via', ratio: 0.9 },
+    { name: '동서울', kind: 'destination', ratio: 1, note: '도착' },
+  ],
+  수원: [
+    { name: '천안종합버스터미널', kind: 'origin', ratio: 0, note: '출발' },
+    { name: '직산', kind: 'via', ratio: 0.2 },
+    { name: '평택', kind: 'via', ratio: 0.55 },
+    { name: '수원', kind: 'destination', ratio: 1, note: '도착' },
+  ],
+};
+
+function hhmmToMinutes(t: string): number {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function minutesToHhmm(total: number): string {
+  const n = ((total % 1440) + 1440) % 1440;
+  return `${String(Math.floor(n / 60)).padStart(2, '0')}:${String(n % 60).padStart(2, '0')}`;
+}
+
+export function getRouteStops(schedule: BusSchedule): RouteStop[] {
+  const template = ROUTE_TEMPLATES[schedule.arrivalStation] || ROUTE_TEMPLATES['서울경부'];
+  const dep = hhmmToMinutes(schedule.departureTime);
+  const arr = hhmmToMinutes(schedule.arrivalTime);
+  const total = Math.max(10, arr - dep);
+  return template.map((stop) => ({
+    name: stop.name,
+    kind: stop.kind,
+    note: stop.note,
+    time: stop.kind === 'destination' ? schedule.arrivalTime : minutesToHhmm(dep + Math.round(total * stop.ratio)),
+  }));
 }
 
 // ==========================================

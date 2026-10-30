@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Ticket } from '@/types';
 import { BusTypeBadge, BusGradeBadge } from '../common/Badge';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, formatPassengerSummary } from '@/lib/utils';
 import { useApp } from '@/context/AppContext';
 import {
   QrCode,
@@ -92,27 +92,21 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           </div>
         </div>
 
-        {/* Seat & Passenger Info Grid */}
-        <div className="p-3.5 bg-[#F8FAFC] rounded-2xl border border-[#EEF2F6] grid grid-cols-3 gap-2 text-center text-xs">
-          <div>
-            <span className="text-[10px] text-[#64748B] block mb-0.5">좌석 번호</span>
-            <span className="font-extrabold text-base text-[#132B45]">
-              {ticket.seatNumbers.join(', ')}번
-            </span>
+        {/* Seat & Passenger Info (세로 정보 리스트) */}
+        <dl className="bg-[#F8FAFC] rounded-2xl border border-[#EEF2F6] divide-y divide-[#EEF2F6] text-xs">
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5">
+            <dt className="text-[#64748B]">좌석 번호</dt>
+            <dd className="font-extrabold text-[#132B45] text-right">{ticket.seatNumbers.join(', ')}번</dd>
           </div>
-          <div>
-            <span className="text-[10px] text-[#64748B] block mb-0.5">탑승 인원</span>
-            <span className="font-bold text-xs text-[#0F172A] pt-1 block">
-              성인 {ticket.passengerCount.adult}명
-            </span>
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5">
+            <dt className="text-[#64748B] whitespace-nowrap">탑승 인원</dt>
+            <dd className="font-bold text-[#0F172A] text-right">{formatPassengerSummary(ticket.passengerCount)}</dd>
           </div>
-          <div>
-            <span className="text-[10px] text-[#64748B] block mb-0.5">버스 등급</span>
-            <span className="font-bold text-xs text-[#2563EB] pt-1 block">
-              {ticket.busSchedule.grade}
-            </span>
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5">
+            <dt className="text-[#64748B]">버스 등급</dt>
+            <dd className="font-bold text-[#2563EB] text-right">{ticket.busSchedule.grade}</dd>
           </div>
-        </div>
+        </dl>
 
         {/* QR Code Quick Area */}
         <div className="pt-1 flex items-center justify-between">
