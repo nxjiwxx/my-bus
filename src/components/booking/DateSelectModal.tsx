@@ -120,17 +120,20 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
     <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
+      fixedHeight
       title="가는 날 · 출발 시간 설정"
       subtitle="날짜와 출발 시간을 선택하면 해당 시간 이후 버스만 조회됩니다"
       footer={
         <button
           type="button"
           onClick={handleConfirm}
-          className="w-full py-3.5 rounded-2xl bg-[#132B45] hover:bg-[#1E3A8A] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-sm transition-colors"
+          className="w-full py-3.5 rounded-2xl bg-[#132B45] hover:bg-[#1E3A8A] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-sm transition-colors"
         >
-          <Check className="w-4 h-4" />
-          <span>
-            {selectedDate} · {String(selectedHour).padStart(2, '0')}시 이후 적용하기
+          <Check className="w-4 h-4 shrink-0" />
+          <span className="whitespace-nowrap">{selectedDate}</span>
+          <span className="h-3 w-px bg-white/35 shrink-0" />
+          <span className="whitespace-nowrap">
+            {String(selectedHour).padStart(2, '0')}:00시 이후 적용
           </span>
         </button>
       }
@@ -245,16 +248,20 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
           </div>
         </div>
 
-        {/* 2. 출발 시간 가로 뱃지 영역 (00시 ~ 24시) */}
+        {/* 2. 출발 시간 가로 선택 영역 (00시 ~ 24시) */}
         <div className="space-y-2.5 pt-1 border-t border-[#EEF2F6]">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-[#2563EB]" />
               <span className="text-xs font-bold text-[#0F172A]">출발 시간 (00시 ~ 24시)</span>
             </div>
-            <span className="text-[11px] font-extrabold text-[#2563EB] bg-[#EFF6FF] px-2 py-0.5 rounded-full whitespace-nowrap">
-              {String(selectedHour).padStart(2, '0')}:00 이후 버스 조회
-            </span>
+            <div className="flex items-center gap-2 text-[11px] font-extrabold text-[#0F172A] whitespace-nowrap">
+              <span className="text-[#64748B]">{selectedDate}</span>
+              <span className="h-3 w-px bg-[#CBD5E1] shrink-0" />
+              <span className="text-[#2563EB]">
+                {String(selectedHour).padStart(2, '0')}:00시 이후
+              </span>
+            </div>
           </div>
 
           <div

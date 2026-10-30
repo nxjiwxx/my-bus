@@ -11,6 +11,7 @@ interface BottomSheetProps {
   children: React.ReactNode;
   footer?: React.ReactNode;
   zIndex?: number;
+  fixedHeight?: boolean;
 }
 
 // 휴대폰 프레임 안에서 하단에서 올라오는 공통 바텀시트
@@ -22,6 +23,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   children,
   footer,
   zIndex = 50,
+  fixedHeight = false,
 }) => {
   if (!isOpen) return null;
 
@@ -32,7 +34,9 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       onClick={onClose}
     >
       <div
-        className="w-full max-h-[88%] flex flex-col bg-white rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom-5 duration-200"
+        className={`w-full ${
+          fixedHeight ? 'h-[78%]' : 'max-h-[88%]'
+        } flex flex-col bg-white rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom-5 duration-200`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="pt-2.5 pb-1 flex justify-center shrink-0">

@@ -169,16 +169,16 @@ export const BookingView: React.FC = () => {
           {/* Header Bar */}
           <div className="bg-white p-3.5 rounded-2xl border border-[#EEF2F6] flex items-center justify-between shadow-xs gap-2">
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[11px] text-[#64748B] font-semibold whitespace-nowrap">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs text-[#475569] font-bold whitespace-nowrap">
                   {searchCriteria.date}
                 </span>
-                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-[#2563EB] bg-[#EFF6FF] px-2 py-0.5 rounded-full whitespace-nowrap">
-                  <Clock className="w-3 h-3" />
-                  {String(searchCriteria.departureHour).padStart(2, '0')}시 이후 출발
+                <span className="h-3.5 w-px bg-[#CBD5E1] shrink-0" aria-hidden="true" />
+                <span className="text-xs font-extrabold text-[#2563EB] whitespace-nowrap">
+                  {String(searchCriteria.departureHour).padStart(2, '0')}:00시 이후
                 </span>
               </div>
-              <span className="text-sm font-extrabold text-[#0F172A] block mt-0.5">
+              <span className="text-sm font-extrabold text-[#0F172A] block mt-1">
                 {searchCriteria.departure} → {searchCriteria.arrival} ({filteredSchedules.length}편)
               </span>
             </div>

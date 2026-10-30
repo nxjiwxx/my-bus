@@ -148,14 +148,14 @@ export const BusSearchForm: React.FC<BusSearchFormProps> = ({
           onClick={() => setIsDateModalOpen(true)}
           className="w-full px-4 py-3 bg-[#F8FAFC] rounded-2xl border border-[#EEF2F6] text-left hover:bg-[#EFF6FF]/40 transition-colors flex items-center justify-between gap-2"
         >
-          <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
+          <div className="flex items-center gap-3 min-w-0">
             <span className="flex items-center gap-1.5 text-sm font-extrabold text-[#0F172A] whitespace-nowrap">
               <Calendar className="w-4 h-4 text-[#132B45] shrink-0" />
               {date}
             </span>
-            <span className="inline-flex items-center gap-1 text-xs font-extrabold text-[#1D4ED8] bg-[#EFF6FF] border border-[#BFDBFE] px-2.5 py-0.5 rounded-full whitespace-nowrap">
-              <Clock className="w-3 h-3" />
-              {String(departureHour).padStart(2, '0')}시 이후
+            <span className="h-4 w-px bg-[#CBD5E1] shrink-0" aria-hidden="true" />
+            <span className="text-sm font-extrabold text-[#2563EB] whitespace-nowrap">
+              {String(departureHour).padStart(2, '0')}:00시 이후
             </span>
           </div>
           <span className="text-xs text-[#2563EB] font-bold whitespace-nowrap shrink-0">변경</span>

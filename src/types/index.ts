@@ -7,6 +7,11 @@ export interface Station {
   name: string;
   region: string;
   isPopular?: boolean;
+  address?: string;
+  landmark?: string;
+  lat?: number;
+  lng?: number;
+  roads?: [string, string];
 }
 
 export interface BusSchedule {
