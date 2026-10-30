@@ -252,7 +252,7 @@ export const AISuggestionCard: React.FC = () => {
         <div className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-white/15 border border-white/20">
           <MapPin className="w-3.5 h-3.5 text-[#A7F3D0]" />
           <span className="text-[11px] font-extrabold text-[#D1FAE5] whitespace-nowrap">
-            AI 비서 · 천안종합버스터미널 도착 완료
+            AI 비서 · 터미널 도착 완료
           </span>
         </div>
 
@@ -371,7 +371,9 @@ export const AISuggestionCard: React.FC = () => {
         <button
           type="button"
           onClick={() => {
-            setTimelineStep(customTimeline?.isConfirmed ? 'wayfinding' : 'config');
+            if (customTimeline?.isConfirmed) {
+              setTimelineStep('wayfinding');
+            }
             setCurrentTab('timeline');
           }}
           className="py-2.5 px-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-extrabold flex items-center justify-center gap-1 shadow-xs transition-colors whitespace-nowrap"

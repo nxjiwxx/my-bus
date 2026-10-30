@@ -7,7 +7,7 @@ import { useApp } from '@/context/AppContext';
 import { cn } from '@/lib/utils';
 
 export const BottomNav: React.FC = () => {
-  const { currentTab, setCurrentTab, activeTicket, customTimeline } = useApp();
+  const { currentTab, setCurrentTab, setBookingMode, activeTicket, customTimeline } = useApp();
 
   const tabs: {
     id: TabType;
@@ -45,7 +45,12 @@ export const BottomNav: React.FC = () => {
           return (
             <button
               key={tab.id}
-              onClick={() => setCurrentTab(tab.id)}
+              onClick={() => {
+                if (tab.id === 'booking') {
+                  setBookingMode('integrated');
+                }
+                setCurrentTab(tab.id);
+              }}
               className={cn(
                 'flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all relative select-none min-w-[56px]',
                 isActive ? 'text-[#132B45]' : 'text-[#94A3B8] hover:text-[#64748B]'

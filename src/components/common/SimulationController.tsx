@@ -16,6 +16,9 @@ export const SimulationController: React.FC = () => {
     showToast,
     setCurrentTab,
     setTimelineStep,
+    customTimeline,
+    resetTimelineToInitial,
+    finishTimelineWayfinding,
     simulateActivityDelay,
     triggerBoardingAlert,
   } = useApp();
@@ -178,7 +181,17 @@ export const SimulationController: React.FC = () => {
               </span>
               <span className="text-[10px] text-[#64748B]">신규 기능</span>
             </div>
-            <div className="grid grid-cols-3 gap-1">
+            <div className="grid grid-cols-2 gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  finishTimelineWayfinding();
+                  setCurrentTab('timeline');
+                }}
+                className="py-1.5 px-2 rounded-lg bg-[#F1F5F9] text-[#334155] text-[10px] font-bold hover:bg-[#E2E8F0] transition-colors"
+              >
+                0. 초기 Empty 화면
+              </button>
               <button
                 type="button"
                 onClick={() => {
@@ -192,6 +205,7 @@ export const SimulationController: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
+                  if (!customTimeline) resetTimelineToInitial();
                   setTimelineStep('recommendation');
                   setCurrentTab('timeline');
                 }}
@@ -202,6 +216,7 @@ export const SimulationController: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
+                  if (!customTimeline) resetTimelineToInitial();
                   setTimelineStep('wayfinding');
                   setCurrentTab('timeline');
                 }}
@@ -214,6 +229,7 @@ export const SimulationController: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
+                  if (!customTimeline) resetTimelineToInitial();
                   setTimelineStep('wayfinding');
                   setCurrentTab('timeline');
                   simulateActivityDelay();
@@ -225,6 +241,7 @@ export const SimulationController: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
+                  if (!customTimeline) resetTimelineToInitial();
                   setTimelineStep('wayfinding');
                   setCurrentTab('timeline');
                   triggerBoardingAlert();

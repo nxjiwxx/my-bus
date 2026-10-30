@@ -67,9 +67,6 @@ export const MyPageView: React.FC = () => {
               <GraduationCap className="w-3.5 h-3.5 text-[#2563EB]" />
               <span>{user.university}</span>
             </p>
-            <p className="text-[11px] text-[#94A3B8] mt-0.5">
-              주요 터미널: {user.frequentTerminal}
-            </p>
           </div>
         </div>
 
@@ -214,13 +211,13 @@ export const MyPageView: React.FC = () => {
         <div className="p-4 bg-white rounded-3xl border border-[#EEF2F6] shadow-xs text-xs space-y-1 text-[#64748B]">
           <div className="flex items-center gap-1.5 font-bold text-[#0F172A]">
             <Phone className="w-3.5 h-3.5 text-[#132B45]" />
-            <span>천안종합버스터미널 고객센터</span>
+            <span>터미널 고객센터</span>
           </div>
           <p className="text-[11px] leading-relaxed">
             충청남도 천안시 동남구 만남로 43 (신부동) | ARS 1688-2550
           </p>
           <div className="text-[10px] text-[#94A3B8] pt-1">
-            My Bus 천안 터미널 AI 개인 맞춤형 모빌리티 프로토타입 v1.0.0
+            My Bus AI 개인 맞춤형 모빌리티 프로토타입 v1.0.0
           </div>
         </div>
       </div>

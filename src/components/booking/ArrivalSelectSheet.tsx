@@ -15,6 +15,29 @@ interface ArrivalSelectSheetProps {
 
 const REGIONS = ['전체', '수도권', '경기', '충청', '강원', '영남', '호남'] as const;
 
+// 터미널별 고속 / 시외 / 고/시 컬러 뱃지
+const TerminalTypeBadge: React.FC<{ type?: Station['availableTypes'] }> = ({ type = 'both' }) => {
+  if (type === 'express') {
+    return (
+      <span className="w-10 py-1 rounded-lg bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[10px] font-extrabold text-center shrink-0 whitespace-nowrap">
+        고속
+      </span>
+    );
+  }
+  if (type === 'intercity') {
+    return (
+      <span className="w-10 py-1 rounded-lg bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[10px] font-extrabold text-center shrink-0 whitespace-nowrap">
+        시외
+      </span>
+    );
+  }
+  return (
+    <span className="w-10 py-1 rounded-lg bg-gradient-to-r from-[#2563EB] to-[#059669] text-white text-[10px] font-extrabold text-center shrink-0 whitespace-nowrap shadow-2xs">
+      고/시
+    </span>
+  );
+};
+
 export const ArrivalSelectSheet: React.FC<ArrivalSelectSheetProps> = ({
   isOpen,
   onClose,
@@ -54,11 +77,7 @@ export const ArrivalSelectSheet: React.FC<ArrivalSelectSheetProps> = ({
       onClose={handleClose}
       fixedHeight
       title={mapStation ? `${mapStation.name} 터미널 위치 지도` : '도착지 터미널 선택'}
-      subtitle={
-        mapStation
-          ? mapStation.address || '터미널 상세 위치 및 주변 교통 안내'
-          : '터미널 왼쪽의 위치 아이콘 버튼을 누르면 위치 지도를 볼 수 있어요'
-      }
+      subtitle={mapStation ? mapStation.address : undefined}
       footer={
         mapStation ? (
           <div className="flex items-center gap-2">
@@ -85,9 +104,7 @@ export const ArrivalSelectSheet: React.FC<ArrivalSelectSheetProps> = ({
       {mapStation ? (
         /* 터미널 위치 지도 상세 화면 */
         <div className="space-y-4">
-          {/* 인터랙티브 위치 지도 카드 */}
           <div className="relative w-full h-60 rounded-2xl overflow-hidden border border-[#CBD5E1] bg-[#E2E8F0] shadow-xs">
-            {/* 실제 지도 타일 (OpenStreetMap Embed) + 커스텀 오버레이 */}
             {mapStation.lat && mapStation.lng && (
               <iframe
                 title={`${mapStation.name} 터미널 지도`}
@@ -101,7 +118,6 @@ export const ArrivalSelectSheet: React.FC<ArrivalSelectSheetProps> = ({
               />
             )}
 
-            {/* 상단 권역 · 좌표 배지 오버레이 */}
             <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#132B45]/90 text-white text-[11px] font-extrabold shadow-sm backdrop-blur-xs">
                 <Compass className="w-3.5 h-3.5 text-[#93C5FD]" />
@@ -114,7 +130,6 @@ export const ArrivalSelectSheet: React.FC<ArrivalSelectSheetProps> = ({
               )}
             </div>
 
-            {/* 하단 중앙 핀 라벨 오버레이 */}
             <div className="absolute bottom-3 left-3 right-3 pointer-events-none flex justify-center">
               <div className="px-3.5 py-2 rounded-2xl bg-white/95 border border-[#BFDBFE] shadow-md flex items-center gap-2 max-w-full">
                 <div className="w-7 h-7 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0">
@@ -125,19 +140,20 @@ export const ArrivalSelectSheet: React.FC<ArrivalSelectSheetProps> = ({
                     {mapStation.name}버스터미널
                   </span>
                   <span className="text-[10px] text-[#64748B] block truncate">
-                    {mapStation.roads ? `${mapStation.roads[0]} · ${mapStation.roads[1]} 교차 권역` : mapStation.address}
+                    {mapStation.roads
+                      ? `${mapStation.roads[0]} · ${mapStation.roads[1]} 교차 권역`
+                      : mapStation.address}
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 터미널 상세 위치 및 연계 교통 정보 */}
           <div className="rounded-2xl border border-[#EEF2F6] bg-[#F8FAFC] divide-y divide-[#E2E8F0]">
             <div className="px-4 py-3 space-y-0.5">
               <span className="text-[10px] font-bold text-[#64748B] block">도로명 주소</span>
               <p className="text-xs font-extrabold text-[#0F172A]">
-                {mapStation.address || `${mapStation.region} ${mapStation.name} 종합버스터미널`}
+                {mapStation.address || `${mapStation.region} ${mapStation.name} 버스터미널`}
               </p>
             </div>
             <div className="px-4 py-3 space-y-0.5">
@@ -200,7 +216,7 @@ export const ArrivalSelectSheet: React.FC<ArrivalSelectSheetProps> = ({
             })}
           </div>
 
-          {/* 주요 인기 도착지 그리드 (전체 권역 & 검색어 없을 때) */}
+          {/* 주요 인기 도착지 그리드 */}
           {selectedRegion === '전체' && !searchQuery.trim() && (
             <div className="space-y-2">
               <div className="flex items-center gap-1 text-[11px] font-bold text-[#64748B]">
@@ -229,16 +245,11 @@ export const ArrivalSelectSheet: React.FC<ArrivalSelectSheetProps> = ({
             </div>
           )}
 
-          {/* 전체 도착지 세로 리스트 (왼쪽 위치 아이콘 버튼 클릭 시 지도 표시) */}
+          {/* 전체 도착지 세로 리스트: 좌측 고속/시외/고·시 뱃지 + 중앙 터미널명 + 우측 위치 지도 버튼 */}
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-[#64748B]">
-                터미널 목록 ({filteredStations.length})
-              </span>
-              <span className="text-[10px] font-semibold text-[#2563EB]">
-                핀 아이콘 클릭 시 지도 보기
-              </span>
-            </div>
+            <span className="text-[11px] font-bold text-[#64748B] block">
+              터미널 목록 ({filteredStations.length})
+            </span>
             {filteredStations.length === 0 ? (
               <div className="py-10 text-center text-xs text-[#94A3B8]">
                 검색 조건에 맞는 도착지 터미널이 없습니다.
@@ -254,7 +265,27 @@ export const ArrivalSelectSheet: React.FC<ArrivalSelectSheetProps> = ({
                         isSelected ? 'bg-[#EFF6FF]/80' : 'hover:bg-[#F8FAFC]'
                       }`}
                     >
-                      {/* 왼쪽: 터미널 위치 지도 열기 전용 버튼 */}
+                      {/* 좌측 + 중앙: 컬러 뱃지(고속/시외/고·시) 및 터미널명 선택 영역 */}
+                      <button
+                        type="button"
+                        onClick={() => handleChoose(st.name)}
+                        className="flex-1 flex items-center gap-2.5 text-left min-w-0 py-0.5"
+                      >
+                        <TerminalTypeBadge type={st.availableTypes} />
+                        <span
+                          className={`text-sm font-bold truncate ${
+                            isSelected ? 'text-[#1D4ED8]' : 'text-[#0F172A]'
+                          }`}
+                        >
+                          {st.name}
+                        </span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F1F5F9] text-[#64748B] whitespace-nowrap">
+                          {st.region}
+                        </span>
+                        {isSelected && <Check className="w-4 h-4 text-[#2563EB] shrink-0 ml-auto" />}
+                      </button>
+
+                      {/* 우측: 터미널 위치 지도 열기 버튼 */}
                       <button
                         type="button"
                         onClick={(e) => {
@@ -266,27 +297,6 @@ export const ArrivalSelectSheet: React.FC<ArrivalSelectSheetProps> = ({
                         className="w-8 h-8 rounded-xl bg-[#EFF6FF] hover:bg-[#2563EB] text-[#2563EB] hover:text-white border border-[#BFDBFE] flex items-center justify-center shrink-0 transition-colors shadow-2xs"
                       >
                         <MapPin className="w-4 h-4" />
-                      </button>
-
-                      {/* 오른쪽: 터미널 명 클릭 시 도착지 선택 */}
-                      <button
-                        type="button"
-                        onClick={() => handleChoose(st.name)}
-                        className="flex-1 flex items-center justify-between text-left min-w-0 py-0.5"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span
-                            className={`text-sm font-bold truncate ${
-                              isSelected ? 'text-[#1D4ED8]' : 'text-[#0F172A]'
-                            }`}
-                          >
-                            {st.name}
-                          </span>
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F1F5F9] text-[#64748B] whitespace-nowrap">
-                            {st.region}
-                          </span>
-                        </div>
-                        {isSelected && <Check className="w-4 h-4 text-[#2563EB] shrink-0" />}
                       </button>
                     </div>
                   );

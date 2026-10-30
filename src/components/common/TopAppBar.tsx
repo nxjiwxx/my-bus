@@ -40,18 +40,14 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
             <h1 className="text-lg font-bold text-[#0F172A] tracking-tight">{title}</h1>
           </div>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#132B45] to-[#1E3A8A] flex items-center justify-center text-white shadow-sm font-black text-sm">
               MB
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-[17px] tracking-tight text-[#132B45]">My Bus</span>
-                <span className="text-[10px] bg-[#EEF2F6] text-[#475569] font-medium px-1.5 py-0.5 rounded-full">
-                  천안
-                </span>
-              </div>
-              <p className="text-[11px] text-[#64748B] -mt-0.5 leading-none">천안종합버스터미널</p>
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-[17px] tracking-tight text-[#132B45]">
+                {title || 'My Bus'}
+              </span>
             </div>
           </div>
         )}
@@ -127,7 +123,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
 
               <div className="p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs">
                 <div className="flex items-center gap-1 text-[#334155] font-semibold mb-1">
-                  <span>천안종합버스터미널 공지</span>
+                  <span>터미널 운영 공지</span>
                 </div>
                 <p className="text-[#475569] leading-relaxed">
                   주말 고속·시외버스 승차홈이 원활히 운영 중입니다. 모바일 승차권을 사전 준비해 주세요.

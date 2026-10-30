@@ -38,6 +38,7 @@ export const TimelineWayfindingView: React.FC = () => {
     dismissBoardingAlert,
     setTimelineStep,
     resetTimelineToInitial,
+    finishTimelineWayfinding,
   } = useApp();
 
   const [openIdx, setOpenIdx] = useState<number | null>(null);
@@ -334,11 +335,15 @@ export const TimelineWayfindingView: React.FC = () => {
                         {isCurrent ? (
                           <button
                             type="button"
-                            onClick={advanceTimelineActivity}
-                            className="w-full py-2.5 bg-[#2563EB] text-white rounded-xl text-xs font-extrabold hover:bg-[#1D4ED8] transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                            onClick={nextItem ? advanceTimelineActivity : finishTimelineWayfinding}
+                            className={`w-full py-2.5 text-white rounded-xl text-xs font-extrabold transition-colors flex items-center justify-center gap-1.5 shadow-xs ${
+                              nextItem
+                                ? 'bg-[#2563EB] hover:bg-[#1D4ED8]'
+                                : 'bg-[#059669] hover:bg-[#047857]'
+                            }`}
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" />
-                            {nextItem ? '활동 완료 · 다음 장소 안내' : '승차장 도착 완료'}
+                            {nextItem ? '활동 완료 · 다음 장소 안내' : '승차장 도착 완료 · 길 안내 종료'}
                             <ArrowRight className="w-3.5 h-3.5" />
                           </button>
                         ) : (
@@ -420,13 +425,24 @@ export const TimelineWayfindingView: React.FC = () => {
         </ul>
       </SectionCard>
 
-      <button
-        type="button"
-        onClick={() => setTimelineStep('config')}
-        className="w-full py-3 bg-white border border-[#CBD5E1] text-[#64748B] rounded-2xl text-xs font-bold hover:bg-[#F8FAFC] transition-colors"
-      >
-        새 조건으로 다시 만들기
-      </button>
+      <div className="space-y-2 pt-1">
+        <button
+          type="button"
+          onClick={finishTimelineWayfinding}
+          className="w-full py-4 bg-gradient-to-r from-[#132B45] to-[#1E3A8A] text-white rounded-2xl text-sm font-black shadow-md hover:from-[#1E3A8A] hover:to-[#2563EB] active:scale-98 transition-all flex items-center justify-center gap-2"
+        >
+          <CheckCircle2 className="w-4 h-4 text-[#93C5FD]" />
+          <span>길 안내 종료하기</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setTimelineStep('config')}
+          className="w-full py-3 bg-white border border-[#CBD5E1] text-[#64748B] rounded-2xl text-xs font-bold hover:bg-[#F8FAFC] transition-colors"
+        >
+          새 조건으로 다시 만들기
+        </button>
+      </div>
 
       <BoardingAlertModal isOpen={isBoardingAlertOpen} onClose={dismissBoardingAlert} timeline={customTimeline} />
     </div>

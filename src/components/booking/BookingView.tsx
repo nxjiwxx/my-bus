@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
-import { BusGrade, BusSchedule, BusType, SeatPassenger, Ticket } from '@/types';
+import { BookingMode, BusGrade, BusSchedule, SeatPassenger, Ticket } from '@/types';
 import { getBusSchedules } from '@/mock/data';
 import { TopAppBar } from '../common/TopAppBar';
 import { BusSearchForm } from './BusSearchForm';
@@ -12,21 +12,22 @@ import { BookingConfirmModal } from './BookingConfirmModal';
 import { PaymentModal } from './PaymentModal';
 import { BookingSuccessModal } from './BookingSuccessModal';
 import { emptyPassengerState } from '@/lib/utils';
-import { Clock } from 'lucide-react';
 
 export const BookingView: React.FC = () => {
   const {
     setCurrentTab,
+    bookingMode,
+    setBookingMode,
     bookingPreset,
     setBookingPreset,
     bookBusTicket,
   } = useApp();
 
   const [step, setStep] = useState<'search' | 'results' | 'seats'>('search');
-  const [busType, setBusType] = useState<BusType>('express');
+  const [searchMode, setSearchMode] = useState<BookingMode>(bookingMode);
   const [searchCriteria, setSearchCriteria] = useState({
     departure: '천안',
-    arrival: '서울경부',
+    arrival: bookingMode === 'intercity' ? '동서울' : '서울경부',
     date: '2026-10-30 (금)',
     departureHour: 17,
   });
@@ -43,10 +44,25 @@ export const BookingView: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [completedTicket, setCompletedTicket] = useState<Ticket | null>(null);
 
-  // 홈 화면 예매 폼 또는 AI 프리셋 감지 시 자동 검색 결과 화면으로 이동
+  // 진입 모드(통합 / 고속 전용 / 시외 전용) 변경 시 동기화
+  useEffect(() => {
+    setSearchMode(bookingMode);
+    setStep('search');
+    setSearchCriteria((prev) => ({
+      ...prev,
+      arrival:
+        bookingMode === 'intercity' && prev.arrival === '서울경부'
+          ? '동서울'
+          : bookingMode === 'express' && prev.arrival === '동서울'
+          ? '서울경부'
+          : prev.arrival,
+    }));
+  }, [bookingMode]);
+
+  // AI 프리셋 감지 시 자동 검색 결과 화면으로 이동
   useEffect(() => {
     if (bookingPreset) {
-      setBusType(bookingPreset.busType);
+      setSearchMode(bookingPreset.busType);
       const parsedHour =
         typeof bookingPreset.departureHour === 'number'
           ? bookingPreset.departureHour
@@ -65,9 +81,9 @@ export const BookingView: React.FC = () => {
     }
   }, [bookingPreset, setBookingPreset]);
 
-  // 선택된 도착지 및 출발 시간(00시~24시) 이후 버스만 필터링
+  // 선택된 도착지 및 출발 시간(00시~24시) 이후 버스만 필터링 (통합/고속/시외 지원)
   const allRouteSchedules = getBusSchedules(
-    busType,
+    searchMode,
     searchCriteria.departure,
     searchCriteria.arrival,
     searchCriteria.departureHour
@@ -121,20 +137,31 @@ export const BookingView: React.FC = () => {
     setCompletedTicket(newTicket);
   };
 
+  const isFromHomeDedicatedButton = bookingMode === 'express' || bookingMode === 'intercity';
+
+  const headerTitle =
+    step === 'search'
+      ? bookingMode === 'express'
+        ? '고속버스 예매'
+        : bookingMode === 'intercity'
+        ? '시외버스 예매'
+        : '고속 · 시외 통합 예매'
+      : step === 'results'
+      ? `${searchCriteria.arrival}행 시간표`
+      : '좌석 선택';
+
   return (
     <div className="flex-1 flex flex-col bg-[#F4F6F9]">
       <TopAppBar
-        title={
-          step === 'search'
-            ? '버스 예매'
-            : step === 'results'
-            ? `${searchCriteria.departure} → ${searchCriteria.arrival}`
-            : '좌석 선택'
-        }
-        showBack={step !== 'search'}
+        title={headerTitle}
+        showBack={step !== 'search' || isFromHomeDedicatedButton}
         onBack={() => {
           if (step === 'seats') setStep('results');
           else if (step === 'results') setStep('search');
+          else if (step === 'search' && isFromHomeDedicatedButton) {
+            setBookingMode('integrated');
+            setCurrentTab('home');
+          }
         }}
       />
 
@@ -142,8 +169,9 @@ export const BookingView: React.FC = () => {
       {step === 'search' && (
         <div className="p-4 space-y-4">
           <BusSearchForm
-            busType={busType}
-            onBusTypeChange={setBusType}
+            mode={searchMode}
+            onModeChange={setSearchMode}
+            lockedMode={isFromHomeDedicatedButton}
             onSearch={handleSearchSubmit}
             initialDeparture={searchCriteria.departure}
             initialArrival={searchCriteria.arrival}
@@ -153,9 +181,9 @@ export const BookingView: React.FC = () => {
 
           {/* 안내 배너 */}
           <div className="p-4 rounded-3xl bg-white border border-[#EEF2F6] text-xs space-y-2">
-            <h4 className="font-extrabold text-[#0F172A]">천안종합버스터미널 예매 안내</h4>
+            <h4 className="font-extrabold text-[#0F172A]">모바일 승차권 예매 안내</h4>
             <ul className="space-y-1 text-[#64748B] text-[11px] list-disc pl-4 leading-relaxed">
-              <li>고속버스는 모바일 승차권 QR코드로 검표원 또는 단말기에 태그할 수 있습니다.</li>
+              <li>고속·시외버스 모두 모바일 승차권 QR코드로 검표원 또는 단말기에 태그할 수 있습니다.</li>
               <li>출발 1시간 전까지는 취소 수수료가 전액 면제됩니다.</li>
               <li>AI 이동 비서가 터미널 이동 소요시간과 권장 출발시간을 자동으로 안내합니다.</li>
             </ul>
@@ -178,9 +206,18 @@ export const BookingView: React.FC = () => {
                   {String(searchCriteria.departureHour).padStart(2, '0')}:00시 이후
                 </span>
               </div>
-              <span className="text-sm font-extrabold text-[#0F172A] block mt-1">
-                {searchCriteria.departure} → {searchCriteria.arrival} ({filteredSchedules.length}편)
-              </span>
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#F1F5F9] text-[#132B45]">
+                  {searchMode === 'integrated'
+                    ? '고속·시외 통합'
+                    : searchMode === 'express'
+                    ? '고속버스'
+                    : '시외버스'}
+                </span>
+                <span className="text-sm font-extrabold text-[#0F172A]">
+                  {searchCriteria.arrival}행 ({filteredSchedules.length}편)
+                </span>
+              </div>
             </div>
             <button
               type="button"

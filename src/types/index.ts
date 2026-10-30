@@ -1,5 +1,9 @@
 export type BusType = 'express' | 'intercity';
 
+export type BookingMode = 'integrated' | 'express' | 'intercity';
+
+export type TimelineStep = 'empty' | 'config' | 'loading' | 'recommendation' | 'wayfinding';
+
 export type BusGrade = '우등' | '프리미엄' | '일반';
 
 export interface Station {
@@ -7,6 +11,7 @@ export interface Station {
   name: string;
   region: string;
   isPopular?: boolean;
+  availableTypes?: 'express' | 'intercity' | 'both';
   address?: string;
   landmark?: string;
   lat?: number;

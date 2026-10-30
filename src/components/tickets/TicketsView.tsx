@@ -70,7 +70,7 @@ export const TicketsView: React.FC = () => {
                 다가오는 승차권이 없습니다
               </h3>
               <p className="text-xs text-[#64748B] leading-relaxed">
-                천안종합버스터미널에서 출발하는 고속·시외버스를 조회하고 빠르게 예매해보세요.
+                원하시는 목적지와 시간대의 고속·시외버스를 조회하고 빠르게 예매해보세요.
               </p>
               <button
                 onClick={() => setCurrentTab('booking')}

@@ -9,7 +9,7 @@ export const TerminalLiveCard: React.FC = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Building2 className="w-4 h-4 text-[#132B45]" />
-          <h4 className="font-bold text-xs text-[#0F172A]">천안종합버스터미널 실시간 현황</h4>
+          <h4 className="font-bold text-xs text-[#0F172A]">터미널 실시간 현황</h4>
         </div>
         <span className="text-[10px] bg-[#ECFDF5] text-[#047857] px-2 py-0.5 rounded-full font-bold">
           운행 정상

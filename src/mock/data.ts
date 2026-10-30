@@ -17,6 +17,7 @@ export const popularDestinations: Station[] = [
     name: '서울경부',
     region: '수도권',
     isPopular: true,
+    availableTypes: 'express',
     address: '서울특별시 서초구 신반포로 194 (반포동)',
     landmark: '지하철 3·7·9호선 고속터미널역 1번 출구 연결',
     lat: 37.5049,
@@ -28,6 +29,7 @@ export const popularDestinations: Station[] = [
     name: '동서울',
     region: '수도권',
     isPopular: true,
+    availableTypes: 'both',
     address: '서울특별시 광진구 강변역로 50 (구의동)',
     landmark: '지하철 2호선 강변역 4번 출구 맞은편',
     lat: 37.5345,
@@ -39,6 +41,7 @@ export const popularDestinations: Station[] = [
     name: '인천',
     region: '수도권',
     isPopular: true,
+    availableTypes: 'both',
     address: '인천광역시 미추홀구 연남로 35 (관교동)',
     landmark: '인천 1호선 인천터미널역 2번 출구 연결',
     lat: 37.4416,
@@ -50,6 +53,7 @@ export const popularDestinations: Station[] = [
     name: '수원',
     region: '경기',
     isPopular: true,
+    availableTypes: 'intercity',
     address: '경기도 수원시 권선구 경수대로 270 (권선동)',
     landmark: 'NC백화점 수원터미널점 · 수인분당선 매교역 인접',
     lat: 37.2507,
@@ -61,6 +65,7 @@ export const popularDestinations: Station[] = [
     name: '대전복합',
     region: '충청',
     isPopular: true,
+    availableTypes: 'both',
     address: '대전광역시 동구 동서대로 1689 (용전동)',
     landmark: '신세계스타일마켓 · 이마트 대전터미널점 연결',
     lat: 36.3504,
@@ -72,6 +77,7 @@ export const popularDestinations: Station[] = [
     name: '청주',
     region: '충청',
     isPopular: true,
+    availableTypes: 'intercity',
     address: '충청북도 청주시 흥덕구 2순환로 1229 (가경동)',
     landmark: '커넥트현대 청주 · 메가폴리스 복합단지 연결',
     lat: 36.6256,
@@ -83,6 +89,7 @@ export const popularDestinations: Station[] = [
     name: '부산',
     region: '영남',
     isPopular: true,
+    availableTypes: 'express',
     address: '부산광역시 금정구 중앙대로 2238 (노포동)',
     landmark: '부산 1호선 노포역 3번 출구 실내 연결',
     lat: 35.2848,
@@ -94,6 +101,7 @@ export const popularDestinations: Station[] = [
     name: '동대구',
     region: '영남',
     isPopular: true,
+    availableTypes: 'both',
     address: '대구광역시 동구 동부로 149 (신천동)',
     landmark: 'KTX 동대구역 · 대구 1호선 동대구역 복합환승센터',
     lat: 35.8778,
@@ -105,6 +113,7 @@ export const popularDestinations: Station[] = [
     name: '광주(유·스퀘어)',
     region: '호남',
     isPopular: true,
+    availableTypes: 'express',
     address: '광주광역시 서구 무진대로 904 (광천동)',
     landmark: '광주신세계백화점 · 유스퀘어 문화관 복합단지',
     lat: 35.1602,
@@ -119,6 +128,7 @@ export const allStations: Station[] = [
     name: '천안',
     region: '충청',
     isPopular: true,
+    availableTypes: 'both',
     address: '충청남도 천안시 동남구 만남로 43 (신부동)',
     landmark: '신세계백화점 천안아산점 · 아라리오 조각광장 연결',
     lat: 36.8195,
@@ -130,6 +140,7 @@ export const allStations: Station[] = [
     id: 'ansan',
     name: '안산',
     region: '경기',
+    availableTypes: 'intercity',
     address: '경기도 안산시 상록구 항가울로 410 (성포동)',
     landmark: '지하철 4호선·수인분당선 중앙역 도보 10분',
     lat: 37.3192,
@@ -140,6 +151,7 @@ export const allStations: Station[] = [
     id: 'seongnam',
     name: '성남(야탑)',
     region: '경기',
+    availableTypes: 'both',
     address: '경기도 성남시 분당구 성남대로925번길 16 (야탑동)',
     landmark: '수인분당선 야탑역 4번 출구 · NC백화점 연결',
     lat: 37.4114,
@@ -150,6 +162,7 @@ export const allStations: Station[] = [
     id: 'goyang',
     name: '고양백석',
     region: '수도권',
+    availableTypes: 'both',
     address: '경기도 고양시 일산동구 중앙로 1036 (백석동)',
     landmark: '지하철 3호선 백석역 8번 출구 · 벨라시타 연결',
     lat: 37.6431,
@@ -160,6 +173,7 @@ export const allStations: Station[] = [
     id: 'wonju',
     name: '원주',
     region: '강원',
+    availableTypes: 'intercity',
     address: '강원특별자치도 원주시 서원대로 175 (단계동)',
     landmark: '단계동 중심상권 · AK플라자 원주점 인접',
     lat: 37.3452,
@@ -170,6 +184,7 @@ export const allStations: Station[] = [
     id: 'gangneung',
     name: '강릉',
     region: '강원',
+    availableTypes: 'express',
     address: '강원특별자치도 강릉시 하슬라로 15 (홍제동)',
     landmark: '강릉시외·고속버스터미널 통합권역',
     lat: 37.7546,
@@ -180,6 +195,7 @@ export const allStations: Station[] = [
     id: 'sejong',
     name: '세종고속',
     region: '충청',
+    availableTypes: 'both',
     address: '세종특별자치시 갈매로 37-12 (대평동)',
     landmark: '세종 BRT 환승정류장 연결',
     lat: 36.4694,
@@ -190,6 +206,7 @@ export const allStations: Station[] = [
     id: 'asan',
     name: '아산(온양)',
     region: '충청',
+    availableTypes: 'intercity',
     address: '충청남도 아산시 번영로 225 (모종동)',
     landmark: '롯데마트 아산터미널점 복합몰 연결',
     lat: 36.7845,
@@ -200,6 +217,7 @@ export const allStations: Station[] = [
     id: 'jeonju',
     name: '전주',
     region: '호남',
+    availableTypes: 'both',
     address: '전북특별자치도 전주시 덕진구 백제대로 705 (금암동)',
     landmark: '전주고속버스터미널 · 전북대 구정문 인접',
     lat: 35.8358,
@@ -210,6 +228,7 @@ export const allStations: Station[] = [
     id: 'ulsan',
     name: '울산',
     region: '영남',
+    availableTypes: 'express',
     address: '울산광역시 남구 삼산로 288 (삼산동)',
     landmark: '롯데백화점 울산점 · 현대백화점 삼산동 중심가',
     lat: 35.5389,
@@ -220,6 +239,7 @@ export const allStations: Station[] = [
     id: 'pohang',
     name: '포항',
     region: '영남',
+    availableTypes: 'express',
     address: '경상북도 포항시 남구 중흥로 85 (상도동)',
     landmark: '포항 종합버스터미널 · 밸류플러스 복합관',
     lat: 36.0145,
@@ -477,7 +497,7 @@ export function generateInitialSeats(selectedSeat = 7): SeatInfo[] {
 // ==========================================
 const ROUTE_TEMPLATES: Record<string, { name: string; kind: RouteStop['kind']; ratio: number; note?: string }[]> = {
   서울경부: [
-    { name: '천안종합버스터미널', kind: 'origin', ratio: 0, note: '출발' },
+    { name: '천안터미널', kind: 'origin', ratio: 0, note: '출발' },
     { name: '천안IC', kind: 'via', ratio: 0.1, note: '고속도로 진입' },
     { name: '안성휴게소', kind: 'rest', ratio: 0.4, note: '통과 (직통)' },
     { name: '신갈JC', kind: 'via', ratio: 0.7 },
@@ -485,7 +505,7 @@ const ROUTE_TEMPLATES: Record<string, { name: string; kind: RouteStop['kind']; r
     { name: '서울경부', kind: 'destination', ratio: 1, note: '도착' },
   ],
   동서울: [
-    { name: '천안종합버스터미널', kind: 'origin', ratio: 0, note: '출발' },
+    { name: '천안터미널', kind: 'origin', ratio: 0, note: '출발' },
     { name: '천안IC', kind: 'via', ratio: 0.1 },
     { name: '안성IC', kind: 'via', ratio: 0.35 },
     { name: '용인IC', kind: 'via', ratio: 0.6 },
@@ -493,7 +513,7 @@ const ROUTE_TEMPLATES: Record<string, { name: string; kind: RouteStop['kind']; r
     { name: '동서울', kind: 'destination', ratio: 1, note: '도착' },
   ],
   수원: [
-    { name: '천안종합버스터미널', kind: 'origin', ratio: 0, note: '출발' },
+    { name: '천안터미널', kind: 'origin', ratio: 0, note: '출발' },
     { name: '직산', kind: 'via', ratio: 0.2 },
     { name: '평택', kind: 'via', ratio: 0.55 },
     { name: '수원', kind: 'destination', ratio: 1, note: '도착' },
@@ -512,7 +532,7 @@ function minutesToHhmm(total: number): string {
 
 export function getRouteStops(schedule: BusSchedule): RouteStop[] {
   const defaultTemplate: { name: string; kind: RouteStop['kind']; ratio: number; note?: string }[] = [
-    { name: '천안종합버스터미널', kind: 'origin', ratio: 0, note: '출발' },
+    { name: '천안터미널', kind: 'origin', ratio: 0, note: '출발' },
     { name: '천안IC', kind: 'via', ratio: 0.12, note: '고속도로 진입' },
     { name: '중간 휴게소 · 분기점', kind: 'rest', ratio: 0.5, note: '경유/정차' },
     { name: `${schedule.arrivalStation}IC`, kind: 'via', ratio: 0.85 },
@@ -582,16 +602,19 @@ const DEPARTURE_TIMES_FULL_DAY = [
 ];
 
 export function getBusSchedules(
-  busType: 'express' | 'intercity',
+  mode: 'integrated' | 'express' | 'intercity',
   departure: string,
   arrival: string,
   minHour = 0
 ): BusSchedule[] {
+  const stationInfo = allStations.find((st) => st.name === arrival);
+  const avail = stationInfo?.availableTypes || 'both';
+
   const meta = DESTINATION_META[arrival] || {
     durationMinutes: 80,
     durationLabel: '1시간 20분',
     baseFee: 7800,
-    platform: busType === 'express' ? '7번 홈' : '11번 홈',
+    platform: mode === 'intercity' ? '11번 홈' : '7번 홈',
     companies: ['동양고속', '충남고속'],
   };
 
@@ -615,14 +638,26 @@ export function getBusSchedules(
     const remainingSeats = Math.max(3, ((idx * 5 + 7) % (totalSeats - 4)) + 3);
     const company = meta.companies[idx % meta.companies.length];
 
+    // 통합 모드('integrated')에서는 터미널 지원 유형이 'both'일 때 고속/시외 편을 교차 생성
+    let itemBusType: 'express' | 'intercity';
+    if (mode === 'express') {
+      itemBusType = 'express';
+    } else if (mode === 'intercity') {
+      itemBusType = 'intercity';
+    } else {
+      if (avail === 'express') itemBusType = 'express';
+      else if (avail === 'intercity') itemBusType = 'intercity';
+      else itemBusType = idx % 2 === 0 ? 'express' : 'intercity';
+    }
+
     const id =
       arrival === '서울경부' && timeStr === '18:00'
         ? 'exp-103'
-        : `${busType}-${arrival}-${timeStr.replace(':', '')}`;
+        : `${itemBusType}-${arrival}-${timeStr.replace(':', '')}`;
 
     return {
       id,
-      busType,
+      busType: itemBusType,
       departureStation: departure,
       arrivalStation: arrival,
       departureTime: timeStr,

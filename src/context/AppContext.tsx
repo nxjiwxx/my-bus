@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import {
+  BookingMode,
   BusSchedule,
   CustomTimeline,
   SimulationState,
@@ -9,6 +10,7 @@ import {
   Ticket,
   TimelineFilterState,
   TimelineItem,
+  TimelineStep,
   TravelRoutine,
   UserProfile,
 } from '@/types';
@@ -85,7 +87,7 @@ function recalculateTimelineSchedule(
     placeId: 'place-platform-boarding',
     title: `고속·시외 ${boardingPlatform} 이동 및 탑승 준비`,
     category: '승차장이동',
-    location: `천안종합버스터미널 1층 ${boardingPlatform}`,
+    location: `터미널 1층 ${boardingPlatform}`,
     startTime: minutesToTimeStr(boardingStartMinutes),
     endTime: busDepartureTimeStr,
     durationMinutes: Math.max(5, actualBufferMinutes),
@@ -144,6 +146,10 @@ interface AppContextType {
   toggleRoutine: (id: string) => void;
   deleteRoutine: (id: string) => void;
 
+  // 버스 예매 진입 모드 ('integrated': 통합 예매, 'express': 고속버스 전용, 'intercity': 시외버스 전용)
+  bookingMode: BookingMode;
+  setBookingMode: (mode: BookingMode) => void;
+
   // 예매 화면 연동을 위한 프리셋 (AI 제안 클릭 시 등)
   bookingPreset: {
     departure: string;
@@ -168,10 +174,11 @@ interface AppContextType {
   // 맞춤형 터미널 여유시간 타임라인 상태 및 메서드
   // ==========================================
   customTimeline: CustomTimeline | null;
-  timelineStep: 'config' | 'recommendation' | 'wayfinding';
-  setTimelineStep: (step: 'config' | 'recommendation' | 'wayfinding') => void;
+  timelineStep: TimelineStep;
+  setTimelineStep: (step: TimelineStep) => void;
   generateTimeline: (filter: TimelineFilterState) => void;
   confirmTimeline: () => void;
+  finishTimelineWayfinding: () => void;
   deleteTimelineItem: (itemId: string) => void;
   addTimelineItemFromPlace: (placeId: string) => void;
   moveTimelineItem: (itemId: string, direction: 'up' | 'down') => void;
@@ -208,6 +215,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(initialTicket);
   const [pastTickets, setPastTickets] = useState<Ticket[]>(initialPastTickets);
   const [routines, setRoutines] = useState<TravelRoutine[]>(initialRoutines);
+  const [bookingMode, setBookingMode] = useState<BookingMode>('integrated');
   const [bookingPreset, setBookingPreset] = useState<{
     departure: string;
     arrival: string;
@@ -218,9 +226,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
-  // 맞춤형 타임라인 상태 (초기에는 STEP 01부터 시작하거나 바로 확인할 수 있도록 구성)
-  const [customTimeline, setCustomTimeline] = useState<CustomTimeline | null>(initialCustomTimeline);
-  const [timelineStep, setTimelineStep] = useState<'config' | 'recommendation' | 'wayfinding'>('config');
+  // 맞춤형 타임라인 상태 (초기에는 추천 기능 사용 전이므로 empty 상태)
+  const [customTimeline, setCustomTimeline] = useState<CustomTimeline | null>(null);
+  const [timelineStep, setTimelineStep] = useState<TimelineStep>('empty');
   const [isBoardingAlertOpen, setIsBoardingAlertOpen] = useState(false);
 
   const showToast = (msg: string) => {
@@ -471,8 +479,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     setCustomTimeline(newTimeline);
-    setTimelineStep('recommendation');
-    showToast('AI가 이용 조건과 여유시간에 맞춘 타임라인을 생성했습니다.');
+    setTimelineStep('loading');
   };
 
   const confirmTimeline = () => {
@@ -480,6 +487,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCustomTimeline((prev) => (prev ? { ...prev, isConfirmed: true, currentActivityIndex: 0 } : null));
     setTimelineStep('wayfinding');
     showToast('타임라인이 확정되었습니다! 실시간 길 안내를 시작합니다.');
+  };
+
+  const finishTimelineWayfinding = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsBoardingAlertOpen(false);
+    setCustomTimeline(null);
+    setTimelineStep('empty');
+    showToast('맞춤형 타임라인 길 안내가 종료되었습니다. 즐거운 이동 되세요!');
   };
 
   const deleteTimelineItem = (itemId: string) => {
@@ -967,6 +984,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addRoutine,
         toggleRoutine,
         deleteRoutine,
+        bookingMode,
+        setBookingMode,
         bookingPreset,
         setBookingPreset,
         customTimeline,
@@ -974,6 +993,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setTimelineStep,
         generateTimeline,
         confirmTimeline,
+        finishTimelineWayfinding,
         deleteTimelineItem,
         addTimelineItemFromPlace,
         moveTimelineItem,
