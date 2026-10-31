@@ -336,7 +336,7 @@ const SeatButton: React.FC<{
       className={`w-10 h-11 rounded-xl border flex flex-col items-center justify-center text-xs font-bold transition-all relative ${bgClass}`}
     >
       <span className="leading-none">{seat.number}</span>
-      {passenger && <span className="text-[9px] font-semibold leading-none mt-1 opacity-90">{TYPE_SHORT[passenger.type]}</span>}
+      {passenger && <span className="text-[10px] font-semibold leading-none mt-1 opacity-90">{TYPE_SHORT[passenger.type]}</span>}
       {seat.number === 7 && !isOccupied && !isSelected && (
         <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] absolute top-1 right-1" />
       )}

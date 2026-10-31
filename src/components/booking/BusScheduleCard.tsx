@@ -62,7 +62,7 @@ export const BusScheduleCard: React.FC<BusScheduleCardProps> = ({
 
         <div className="flex flex-col items-center px-4">
           <ArrowRight className="w-5 h-5 text-[#94A3B8]" />
-          <span className="text-[10px] font-semibold text-[#2563EB] mt-0.5 bg-[#EFF6FF] px-1.5 py-0.2 rounded">
+          <span className="text-[10px] font-semibold text-[#2563EB] mt-0.5 bg-[#EFF6FF] px-1.5 py-0.5 rounded">
             {schedule.platform}
           </span>
         </div>

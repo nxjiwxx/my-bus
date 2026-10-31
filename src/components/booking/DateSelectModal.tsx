@@ -232,7 +232,7 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
                     <span className="text-xs leading-none">{day}</span>
                     {isToday && (
                       <span
-                        className={`text-[7px] font-extrabold leading-none mt-0.5 ${
+                        className={`text-[10px] font-extrabold leading-none mt-0.5 ${
                           isSelected ? 'text-[#93C5FD]' : 'text-[#2563EB]'
                         }`}
                       >
