@@ -25,7 +25,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#EEF2F6] px-4 py-3 flex items-center justify-between transition-colors">
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#EEF2F6] px-5 py-3.5 flex items-center justify-between transition-colors">
         {showBack ? (
           <div className="flex items-center gap-2">
             <button
@@ -37,18 +37,13 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h1 className="text-lg font-bold text-[#0F172A] tracking-tight">{title}</h1>
+            <h1 className="text-[19px] font-extrabold text-[#0F172A] tracking-tight">{title}</h1>
           </div>
         ) : (
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#132B45] to-[#1E3A8A] flex items-center justify-center text-white shadow-sm font-black text-sm">
-              MB
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-[17px] tracking-tight text-[#132B45]">
-                {title || 'My Bus'}
-              </span>
-            </div>
+          <div className="flex items-center">
+            <h1 className="font-extrabold text-[20px] tracking-tight text-[#132B45]">
+              {title || 'My Bus'}
+            </h1>
           </div>
         )}
 
