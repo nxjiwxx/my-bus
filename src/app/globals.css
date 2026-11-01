@@ -10,10 +10,18 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  /* 앱 전역 핀치 줌 비허용 (가로·세로 패닝만 허용) */
+  touch-action: pan-x pan-y;
   /* 한글 단어 중간에서 줄바꿈되지 않도록 어절 단위로 줄바꿈 */
   word-break: keep-all;
   overflow-wrap: break-word;
   line-break: strict;
+}
+
+/* 지도 영역에서만 핀치 줌 허용 */
+.map-pinch-zoom,
+.map-pinch-zoom * {
+  touch-action: pinch-zoom pan-x pan-y manipulation;
 }
 
 h1, h2, h3, h4, h5 {

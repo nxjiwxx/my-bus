@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className="h-full antialiased">
-      <body className="min-h-full flex flex-col font-sans bg-[#E2E8F0] text-[#0F172A] selection:bg-[#E1EDFB] selection:text-[#17365D]">
+      <body className="min-h-full flex flex-col font-sans bg-surface-container-high text-surface-on-surface selection:bg-primary-container selection:text-primary-on-container">
         {children}
       </body>
     </html>

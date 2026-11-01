@@ -75,6 +75,8 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
         className={`w-full ${
           fixedHeight ? 'h-[78%]' : 'max-h-[88%]'
         } flex flex-col bg-white rounded-t-3xl shadow-2xl transition-transform duration-280 ease-[cubic-bezier(0.22,1,0.36,1)] ${
@@ -83,15 +85,15 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="pt-2.5 pb-1 flex justify-center shrink-0">
-          <span className="w-10 h-1 rounded-full bg-[#CBD5E1]" />
+          <span className="w-10 h-1 rounded-full bg-surface-outline-variant" />
         </div>
-        <div className="px-5 pt-2 pb-3 flex items-start justify-between gap-3 border-b border-[#EEF2F6] shrink-0">
+        <div className="px-5 pt-2 pb-3 flex items-start justify-between gap-3 border-b border-surface-container shrink-0">
           <div className="min-w-0">
-            <h3 className="text-base font-extrabold text-[#0F172A] tracking-tight">
+            <h3 className="text-body font-extrabold text-surface-on-surface tracking-tight">
               {display.title}
             </h3>
             {display.subtitle && (
-              <p className="text-[11px] text-[#64748B] mt-0.5 leading-relaxed">
+              <p className="text-caption-sm text-surface-outline mt-0.5 leading-relaxed">
                 {display.subtitle}
               </p>
             )}
@@ -100,7 +102,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="p-1 -mr-1 text-[#64748B] hover:text-[#0F172A] shrink-0"
+            className="p-2 -mr-2 -mt-1 text-surface-outline hover:text-surface-on-surface shrink-0 rounded-full hover:bg-surface-soft transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -113,7 +115,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           {display.children}
         </div>
         {display.footer && (
-          <div className="px-5 pt-3 pb-5 border-t border-[#EEF2F6] bg-white shrink-0">
+          <div className="px-5 pt-3 pb-5 border-t border-surface-container bg-white shrink-0">
             {display.footer}
           </div>
         )}

@@ -23,17 +23,17 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 }) => (
   <section
     className={`rounded-3xl border shadow-xs overflow-hidden ${
-      tone === 'ai' ? 'bg-white border-[#DBEAFE]' : 'bg-white border-[#EEF2F6]'
+      tone === 'ai' ? 'bg-white border-express-soft' : 'bg-white border-surface-container'
     }`}
   >
-    <header className="px-5 pt-4 pb-3 flex items-start justify-between gap-3 border-b border-[#F1F5F9]">
+    <header className="px-5 pt-4 pb-3 flex items-start justify-between gap-3 border-b border-surface-soft">
       <div className="min-w-0">
         {eyebrow && (
-          <span className="block text-[10px] font-extrabold tracking-wide leading-none mb-1.5" style={{ color: eyebrowColor }}>
+          <span className="block text-caption-xs font-extrabold tracking-wide leading-none mb-1.5" style={{ color: eyebrowColor }}>
             {eyebrow}
           </span>
         )}
-        <h4 className="text-sm font-extrabold text-[#0F172A] tracking-tight leading-snug">{title}</h4>
+        <h4 className="text-label font-extrabold text-surface-on-surface tracking-tight leading-snug">{title}</h4>
       </div>
       {right && <div className="shrink-0">{right}</div>}
     </header>
@@ -50,11 +50,11 @@ export const KeyValueRow: React.FC<{
   dark?: boolean;
 }> = ({ label, value, valueClassName = '', dot, dark = false }) => (
   <div className="flex items-center justify-between gap-3 py-2.5">
-    <span className={`flex items-center gap-2 text-xs ${dark ? 'text-white/70' : 'text-[#64748B]'}`}>
+    <span className={`flex items-center gap-2 text-caption ${dark ? 'text-white/70' : 'text-surface-outline'}`}>
       {dot && <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: dot }} />}
       {label}
     </span>
-    <span className={`text-xs font-extrabold text-right ${dark ? 'text-white' : 'text-[#0F172A]'} ${valueClassName}`}>
+    <span className={`text-caption font-extrabold text-right ${dark ? 'text-white' : 'text-surface-on-surface'} ${valueClassName}`}>
       {value}
     </span>
   </div>

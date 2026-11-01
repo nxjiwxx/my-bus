@@ -154,38 +154,38 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
               aria-label="이전 달"
               className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-colors ${
                 canGoPrevMonth
-                  ? 'bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC]'
-                  : 'bg-[#F8FAFC] border-[#EEF2F6] text-[#CBD5E1] cursor-not-allowed'
+                  ? 'bg-white border-surface-container-high text-surface-on-surface hover:bg-surface-bright'
+                  : 'bg-surface-bright border-surface-container text-surface-outline-variant cursor-not-allowed'
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="text-sm font-black text-[#0F172A] min-w-[96px] text-center whitespace-nowrap">
+            <span className="text-label font-black text-surface-on-surface min-w-[96px] text-center whitespace-nowrap">
               {viewYear}년 {viewMonth + 1}월
             </span>
             <button
               type="button"
               onClick={handleNextMonth}
               aria-label="다음 달"
-              className="w-8 h-8 rounded-xl border bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-xl border bg-white border-surface-container-high text-surface-on-surface hover:bg-surface-bright flex items-center justify-center transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
 
           {/* 달력 카드 (세로 스크롤 없이 한눈에 들어오도록 컴팩트 구성) */}
-          <div className="p-2.5 rounded-2xl bg-[#F8FAFC] border border-[#EEF2F6]">
+          <div className="p-2.5 rounded-2xl bg-surface-bright border border-surface-container">
             {/* 요일 헤더 */}
-            <div className="grid grid-cols-7 text-center pb-1.5 border-b border-[#E2E8F0]">
+            <div className="grid grid-cols-7 text-center pb-1.5 border-b border-surface-container-high">
               {WEEKDAYS.map((dayName, idx) => (
                 <span
                   key={dayName}
-                  className={`text-[11px] font-extrabold ${
+                  className={`text-caption-sm font-extrabold ${
                     idx === 0
                       ? 'text-[#EF4444]'
                       : idx === 6
-                      ? 'text-[#2563EB]'
-                      : 'text-[#64748B]'
+                      ? 'text-express'
+                      : 'text-surface-outline'
                   }`}
                 >
                   {dayName}
@@ -217,23 +217,23 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
                     onClick={() => handlePickDate(formatted)}
                     className={`h-8 rounded-xl flex flex-col items-center justify-center transition-all relative ${
                       disabled
-                        ? 'opacity-30 cursor-not-allowed text-[#94A3B8]'
+                        ? 'opacity-30 cursor-not-allowed text-surface-outline'
                         : isSelected
-                        ? 'bg-[#132B45] text-white font-black shadow-xs'
+                        ? 'bg-primary text-white font-black shadow-xs'
                         : isToday
-                        ? 'bg-[#EFF6FF] text-[#1D4ED8] font-extrabold border border-[#BFDBFE]'
+                        ? 'bg-express-container text-express-on-container font-extrabold border border-express-border'
                         : dow === 0
                         ? 'text-[#EF4444] font-bold hover:bg-white'
                         : dow === 6
-                        ? 'text-[#2563EB] font-bold hover:bg-white'
-                        : 'text-[#0F172A] font-semibold hover:bg-white'
+                        ? 'text-express font-bold hover:bg-white'
+                        : 'text-surface-on-surface font-semibold hover:bg-white'
                     }`}
                   >
-                    <span className="text-xs leading-none">{day}</span>
+                    <span className="text-caption leading-none">{day}</span>
                     {isToday && (
                       <span
-                        className={`text-[10px] font-extrabold leading-none mt-0.5 ${
-                          isSelected ? 'text-[#93C5FD]' : 'text-[#2563EB]'
+                        className={`text-caption-xs font-extrabold leading-none mt-0.5 ${
+                          isSelected ? 'text-[#93C5FD]' : 'text-express'
                         }`}
                       >
                         오늘
@@ -247,7 +247,7 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
         </div>
 
         {/* 2. 출발 시간 가로 선택 영역 (시계 아이콘 · '출발 시간(00시~24시)' · 날짜 표기 제거) */}
-        <div className="pt-3 border-t border-[#EEF2F6]">
+        <div className="pt-3 border-t border-surface-container">
           <div
             ref={hourScrollRef}
             className="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar"
@@ -261,10 +261,10 @@ export const DateSelectModal: React.FC<DateSelectModalProps> = ({
                   type="button"
                   data-hour={hour}
                   onClick={() => handlePickHour(hour)}
-                  className={`shrink-0 px-3.5 py-2 rounded-xl text-xs font-extrabold border whitespace-nowrap transition-all ${
+                  className={`shrink-0 px-3.5 py-2 rounded-xl text-caption font-extrabold border whitespace-nowrap transition-all ${
                     isSelected
-                      ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-xs'
-                      : 'bg-[#F8FAFC] text-[#334155] border-[#E2E8F0] hover:border-[#94A3B8]'
+                      ? 'bg-express text-white border-express shadow-xs'
+                      : 'bg-surface-bright text-surface-on-variant border-surface-container-high hover:border-surface-muted'
                   }`}
                 >
                   {label}

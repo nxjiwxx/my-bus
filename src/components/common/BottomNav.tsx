@@ -23,20 +23,20 @@ export const BottomNav: React.FC = () => {
       label: '여유시간',
       icon: Sparkles,
       badge: !!customTimeline?.isConfirmed,
-      badgeColor: 'bg-[#6366F1]',
+      badgeColor: 'bg-ai-primary',
     },
     {
       id: 'tickets',
       label: '내 승차권',
       icon: QrCode,
       badge: !!activeTicket,
-      badgeColor: 'bg-[#2563EB]',
+      badgeColor: 'bg-express',
     },
     { id: 'mypage', label: '마이페이지', icon: User },
   ];
 
   return (
-    <nav className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-md border-t border-[#EEF2F6] px-2 py-1 safe-bottom shadow-sm">
+    <nav className="sticky bottom-0 z-30 bg-white/95 backdrop-blur-md border-t border-surface-container px-2 py-1 safe-bottom shadow-sm">
       <div className="flex items-center justify-around">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -52,37 +52,40 @@ export const BottomNav: React.FC = () => {
                 setCurrentTab(tab.id);
               }}
               className={cn(
-                'flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all relative select-none min-w-[56px]',
-                isActive ? 'text-[#132B45]' : 'text-[#94A3B8] hover:text-[#64748B]'
+                'flex flex-col items-center justify-center py-1.5 px-2.5 rounded-xl transition-all relative select-none min-w-[60px] min-h-[48px]',
+                isActive ? 'text-primary' : 'text-surface-outline hover:text-surface-on-variant'
               )}
             >
               <div className="relative">
                 <Icon
                   className={cn(
                     'w-5 h-5 transition-transform duration-200',
-                    isActive ? 'scale-110 stroke-[2.4] text-[#132B45]' : 'stroke-[1.8]'
+                    isActive ? 'scale-105 stroke-[2.4] text-primary' : 'stroke-[1.8]'
                   )}
                 />
                 {tab.badge && (
                   <span
                     className={cn(
                       'absolute -top-1 -right-1.5 w-2 h-2 rounded-full ring-2 ring-white',
-                      tab.badgeColor || 'bg-[#2563EB]'
+                      tab.badgeColor || 'bg-express'
                     )}
                   />
                 )}
               </div>
               <span
                 className={cn(
-                  'text-[10px] mt-1 transition-all leading-none',
-                  isActive ? 'font-extrabold text-[#132B45]' : 'font-medium text-[#64748B]'
+                  'text-caption-sm mt-1 transition-all leading-none',
+                  isActive ? 'font-extrabold text-primary' : 'font-medium text-surface-outline'
                 )}
               >
                 {tab.label}
               </span>
-              {isActive && (
-                <span className="w-1 h-1 bg-[#132B45] rounded-full mt-0.5" />
-              )}
+              <span
+                className={cn(
+                  'w-1 h-1 rounded-full mt-0.5 transition-opacity',
+                  isActive ? 'bg-primary opacity-100' : 'opacity-0'
+                )}
+              />
             </button>
           );
         })}

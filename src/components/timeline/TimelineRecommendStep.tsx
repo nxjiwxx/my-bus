@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { mockTimelinePlaces } from '@/mock/data';
 import { BottomSheet } from '../common/BottomSheet';
+import { BusTypeBadge } from '../common/Badge';
 import { RouteRow, RAIL_COLORS } from './RouteRail';
 import {
   Trash2,
@@ -26,6 +27,7 @@ const boundaryLabelOf = (b: string) =>
 
 export const TimelineRecommendStep: React.FC = () => {
   const {
+    activeTicket,
     customTimeline,
     confirmTimeline,
     deleteTimelineItem,
@@ -42,6 +44,16 @@ export const TimelineRecommendStep: React.FC = () => {
   const [replacingItemId, setReplacingItemId] = useState<string | null>(null);
 
   if (!customTimeline) return null;
+
+  const busType = activeTicket?.busSchedule.busType || 'express';
+  const isExpress = busType === 'express';
+
+  const accentText = isExpress ? 'text-express' : 'text-intercity';
+  const accentBg = isExpress ? 'bg-express' : 'bg-intercity';
+  const accentContainer = isExpress ? 'bg-express-container' : 'bg-intercity-container';
+  const accentOnContainer = isExpress ? 'text-express-on-container' : 'text-intercity-on-container';
+  const accentBorder = isExpress ? 'border-express-border' : 'border-intercity-border';
+  const railPrimaryColor = isExpress ? RAIL_COLORS.active : RAIL_COLORS.boarding;
 
   const items = customTimeline.items;
   const activityItems = items.filter((it) => !it.isBoardingStep);
@@ -60,55 +72,56 @@ export const TimelineRecommendStep: React.FC = () => {
   return (
     <div className="p-5 pb-9 space-y-5">
       {/* 1. 상단 AI 추천 요약 & 안전 상태 바 */}
-      <section className="bg-white border border-[#E2E8F0] rounded-3xl p-4 shadow-2xs space-y-3.5">
+      <section className="bg-white border border-surface-container-high rounded-3xl p-4 shadow-2xs space-y-3.5">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-            <span className="text-[12px] font-extrabold bg-[#132B45] text-white px-2.5 py-1 rounded-full whitespace-nowrap">
+            <BusTypeBadge busType={busType} />
+            <span className="text-caption font-extrabold bg-primary text-white px-2.5 py-1 rounded-full whitespace-nowrap">
               {customTimeline.busDepartureTime} · {customTimeline.boardingPlatform}
             </span>
-            <span className="text-[12px] font-bold bg-[#EBFBF5] text-[#065F46] border border-[#4CD9A4] px-2.5 py-1 rounded-full whitespace-nowrap">
+            <span className={`text-caption font-bold ${accentContainer} ${accentOnContainer} border ${accentBorder} px-2.5 py-1 rounded-full whitespace-nowrap`}>
               {boundaryLabel}
             </span>
-            <span className="text-[12px] font-bold bg-[#F5F6F8] text-[#334155] px-2.5 py-1 rounded-full whitespace-nowrap">
+            <span className="text-caption font-bold bg-surface-container text-surface-on-variant px-2.5 py-1 rounded-full whitespace-nowrap">
               {customTimeline.filter.companion} · {customTimeline.filter.experience}
             </span>
           </div>
           <button
             type="button"
             onClick={() => setTimelineStep('config')}
-            className="text-[13px] font-bold text-[#475569] hover:text-[#0F172A] flex items-center gap-1 bg-[#F5F6F8] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0"
+            className="text-label-sm font-bold text-surface-subtle hover:text-surface-on-surface flex items-center gap-1 bg-surface-container px-3 py-1.5 rounded-full whitespace-nowrap shrink-0"
           >
             <RotateCcw className="w-3.5 h-3.5" /> 조건변경
           </button>
         </div>
 
         {/* 4개 핵심 수치 한 줄 요약 */}
-        <div className="grid grid-cols-4 bg-[#F8FAFC] rounded-2xl border border-[#EEF2F6] divide-x divide-[#E2E8F0] py-2.5 text-center">
+        <div className="grid grid-cols-4 bg-surface-bright rounded-2xl border border-surface-container divide-x divide-surface-container-high py-2.5 text-center">
           <div>
-            <span className="text-[12px] text-[#64748B] font-medium block">시설 이용</span>
-            <span className="text-[16px] font-extrabold text-[#2563EB] mt-0.5 block">
+            <span className="text-caption text-surface-outline font-medium block">시설 이용</span>
+            <span className={`text-body font-extrabold ${accentText} mt-0.5 block tabular-nums`}>
               {totalActivityDuration}분
             </span>
           </div>
           <div>
-            <span className="text-[12px] text-[#64748B] font-medium block">도보 이동</span>
-            <span className="text-[16px] font-extrabold text-[#D97706] mt-0.5 block">
+            <span className="text-caption text-surface-outline font-medium block">도보 이동</span>
+            <span className="text-body font-extrabold text-warning-on-container mt-0.5 block tabular-nums">
               {totalTransitDuration}분
             </span>
           </div>
           <div>
-            <span className="text-[12px] text-[#64748B] font-medium block">탑승 여유</span>
+            <span className="text-caption text-surface-outline font-medium block">탑승 여유</span>
             <span
-              className={`text-[16px] font-extrabold mt-0.5 block ${
-                isBufferShort ? 'text-[#DC2626]' : 'text-[#059669]'
+              className={`text-body font-extrabold mt-0.5 block tabular-nums ${
+                isBufferShort ? 'text-error' : accentText
               }`}
             >
               {customTimeline.actualBufferMinutes}분
             </span>
           </div>
           <div>
-            <span className="text-[12px] text-[#64748B] font-medium block">예상 비용</span>
-            <span className="text-[16px] font-extrabold text-[#0F172A] mt-0.5 block">
+            <span className="text-caption text-surface-outline font-medium block">예상 비용</span>
+            <span className="text-body font-extrabold text-surface-on-surface mt-0.5 block tabular-nums">
               {totalEstimatedCost === 0 ? '무료' : `${totalEstimatedCost.toLocaleString()}원`}
             </span>
           </div>
@@ -116,47 +129,47 @@ export const TimelineRecommendStep: React.FC = () => {
 
         {/* 시간 부족 경고 또는 안전 안내 배너 */}
         {isBufferShort ? (
-          <div className="p-3 bg-[#FEF2F2] border border-[#FECACA] rounded-2xl flex items-center justify-between gap-2">
-            <span className="text-[13px] font-extrabold text-[#991B1B] flex items-center gap-1.5 truncate">
-              <AlertTriangle className="w-4 h-4 text-[#DC2626] shrink-0" />
+          <div className="p-3 bg-error-container border border-error/30 rounded-2xl flex items-center justify-between gap-2">
+            <span className="text-label-sm font-extrabold text-error-on-container flex items-center gap-1.5 truncate">
+              <AlertTriangle className="w-4 h-4 text-error shrink-0" />
               탑승 여유 부족 ({customTimeline.actualBufferMinutes}분)
             </span>
             <div className="flex items-center gap-1.5 shrink-0">
               <button
                 type="button"
                 onClick={autoAdjustOverflowTimeline}
-                className="px-2.5 py-1.5 bg-[#DC2626] text-white rounded-xl text-[12px] font-extrabold whitespace-nowrap"
+                className="px-2.5 py-1.5 bg-error text-white rounded-xl text-caption font-extrabold whitespace-nowrap"
               >
                 AI 시간축소
               </button>
               <button
                 type="button"
                 onClick={applyAlternativeShortCourse}
-                className="px-2.5 py-1.5 bg-white text-[#991B1B] border border-[#FCA5A5] rounded-xl text-[12px] font-extrabold whitespace-nowrap"
+                className="px-2.5 py-1.5 bg-white text-error-on-container border border-error/40 rounded-xl text-caption font-extrabold whitespace-nowrap"
               >
                 내부코스
               </button>
             </div>
           </div>
         ) : (
-          <div className="px-3.5 py-2.5 bg-[#EBFBF5] border border-[#4CD9A4] rounded-2xl flex items-center justify-between text-[13px] text-[#065F46]">
+          <div className={`px-3.5 py-2.5 ${accentContainer} border ${accentBorder} rounded-2xl flex items-center justify-between text-label-sm ${accentOnContainer}`}>
             <span className="font-bold flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#059669] shrink-0" />
+              <ShieldCheck className={`w-4 h-4 ${accentText} shrink-0`} />
               출발 {customTimeline.actualBufferMinutes}분 전 승차장 도착 보장
             </span>
-            <span className="text-[12px] font-extrabold text-[#059669]">동선 최적화됨</span>
+            <span className={`text-caption font-extrabold ${accentText}`}>동선 최적화됨</span>
           </div>
         )}
       </section>
 
       {/* 2. 중앙 노선도형 타임라인 & 인라인 편집 */}
-      <section className="bg-white rounded-3xl border border-[#E2E8F0] p-4 shadow-2xs space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-[#F1F5F9]">
+      <section className="bg-white rounded-3xl border border-surface-container-high p-4 shadow-2xs space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-surface-soft">
           <div className="flex items-baseline gap-2">
-            <h3 className="text-[19px] font-extrabold text-[#0F172A] tracking-tight">
+            <h3 className="text-title-sm font-extrabold text-surface-on-surface tracking-tight">
               이동 순서 노선도
             </h3>
-            <span className="text-[13px] text-[#94A3B8] font-semibold">
+            <span className="text-label-sm text-surface-outline font-semibold">
               순서·시간 편집 가능
             </span>
           </div>
@@ -164,7 +177,7 @@ export const TimelineRecommendStep: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsAddModalOpen(true)}
-              className="text-[13px] font-extrabold text-white bg-[#2563EB] px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-[#1D4ED8] transition-colors whitespace-nowrap"
+              className={`text-label-sm font-extrabold text-white ${accentBg} px-3 py-1.5 rounded-full flex items-center gap-1 hover:opacity-90 transition-opacity whitespace-nowrap`}
             >
               <Plus className="w-3.5 h-3.5" /> 장소 추가
             </button>
@@ -176,18 +189,18 @@ export const TimelineRecommendStep: React.FC = () => {
           <RouteRow
             node="origin"
             nodeY={12}
-            nodeColor={RAIL_COLORS.active}
-            bottomColor={RAIL_COLORS.active}
+            nodeColor={railPrimaryColor}
+            bottomColor={railPrimaryColor}
             time={customTimeline.currentTime}
             contentClassName="pb-3"
           >
-            <div className="flex items-center justify-between text-[14px]">
-              <span className="font-extrabold text-[#0F172A] flex items-center gap-1.5">
-                <Navigation className="w-3.5 h-3.5 text-[#2563EB]" />
+            <div className="flex items-center justify-between text-label">
+              <span className="font-extrabold text-surface-on-surface flex items-center gap-1.5">
+                <Navigation className={`w-3.5 h-3.5 ${accentText}`} />
                 {customTimeline.currentLocation}
               </span>
-              <span className="text-[12px] font-bold text-[#64748B] flex items-center gap-1">
-                <Footprints className="w-3 h-3 text-[#2563EB]" /> 도보 3분
+              <span className="text-caption font-bold text-surface-outline flex items-center gap-1">
+                <Footprints className={`w-3.5 h-3.5 ${accentText}`} /> 도보 3분
               </span>
             </div>
           </RouteRow>
@@ -196,9 +209,6 @@ export const TimelineRecommendStep: React.FC = () => {
           {items.map((item, idx) => {
             const isBoarding = !!item.isBoardingStep;
             const isLast = idx === items.length - 1;
-            const nextIsBoarding = !!items[idx + 1]?.isBoardingStep;
-            const segColor = nextIsBoarding ? RAIL_COLORS.boarding : RAIL_COLORS.active;
-            const topColor = isBoarding ? RAIL_COLORS.boarding : RAIL_COLORS.active;
             const canMoveUp = !isBoarding && idx > 0;
             const canMoveDown = !isBoarding && idx < activityItems.length - 1;
 
@@ -207,9 +217,9 @@ export const TimelineRecommendStep: React.FC = () => {
                 key={item.id}
                 node={isBoarding ? 'terminal' : 'stop'}
                 nodeY={20}
-                nodeColor={isBoarding ? RAIL_COLORS.boarding : RAIL_COLORS.active}
-                topColor={topColor}
-                bottomColor={isLast ? null : segColor}
+                nodeColor={railPrimaryColor}
+                topColor={railPrimaryColor}
+                bottomColor={isLast ? null : railPrimaryColor}
                 icon={isBoarding ? <Bus className="w-3 h-3 text-white" /> : undefined}
                 time={item.startTime}
                 timeSub={`~${item.endTime}`}
@@ -218,24 +228,22 @@ export const TimelineRecommendStep: React.FC = () => {
                 <div
                   className={`rounded-2xl border p-3.5 ${
                     isBoarding
-                      ? 'bg-[#EBFBF5] border-[#4CD9A4]'
-                      : 'bg-[#F8FAFC] border-[#E2E8F0]'
+                      ? `${accentContainer} ${accentBorder}`
+                      : 'bg-surface-bright border-surface-container-high'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
                       <span
-                        className={`text-[11px] font-extrabold px-2 py-0.5 rounded-md whitespace-nowrap shrink-0 ${
-                          isBoarding ? 'bg-[#059669] text-white' : 'bg-[#2563EB] text-white'
-                        }`}
+                        className={`text-caption-sm font-extrabold px-2 py-0.5 rounded-md whitespace-nowrap shrink-0 ${accentBg} text-white`}
                       >
                         {isBoarding ? '탑승' : item.category}
                       </span>
-                      <span className="text-[16px] font-extrabold text-[#0F172A] truncate">
+                      <span className="text-body font-extrabold text-surface-on-surface truncate">
                         {item.title}
                       </span>
                     </div>
-                    <span className="text-[13px] font-bold text-[#475569] whitespace-nowrap shrink-0">
+                    <span className="text-label-sm font-bold text-surface-subtle whitespace-nowrap shrink-0">
                       {isBoarding
                         ? `${item.durationMinutes}분 여유`
                         : `${item.durationMinutes}분 · ${item.cost}`}
@@ -243,25 +251,25 @@ export const TimelineRecommendStep: React.FC = () => {
                   </div>
 
                   {!isBoarding && (
-                    <div className="flex items-center justify-between gap-1.5 mt-2.5 pt-2.5 border-t border-[#E2E8F0]/80">
+                    <div className="flex items-center justify-between gap-1.5 mt-2.5 pt-2.5 border-t border-surface-container-high/80">
                       {/* 체류시간 -5/+5 조절 */}
-                      <div className="flex items-center bg-white rounded-xl border border-[#E2E8F0] px-1.5 py-1">
+                      <div className="flex items-center bg-white rounded-xl border border-surface-container-high px-1.5 py-1">
                         <button
                           type="button"
                           onClick={() => updateTimelineItemDuration(item.id, -5)}
-                          className="px-2 text-[12px] font-extrabold text-[#334155] hover:text-[#2563EB] flex items-center gap-0.5"
+                          className={`px-2 py-0.5 text-caption font-extrabold text-surface-on-variant hover:${accentText} flex items-center gap-0.5`}
                         >
-                          <Minus className="w-3 h-3" />5분
+                          <Minus className="w-3.5 h-3.5" />5분
                         </button>
-                        <span className="px-2 text-[13px] font-black text-[#132B45]">
+                        <span className="px-2 text-label-sm font-black text-primary tabular-nums">
                           {item.durationMinutes}분
                         </span>
                         <button
                           type="button"
                           onClick={() => updateTimelineItemDuration(item.id, 5)}
-                          className="px-2 text-[12px] font-extrabold text-[#334155] hover:text-[#2563EB] flex items-center gap-0.5"
+                          className={`px-2 py-0.5 text-caption font-extrabold text-surface-on-variant hover:${accentText} flex items-center gap-0.5`}
                         >
-                          <Plus className="w-3 h-3" />5분
+                          <Plus className="w-3.5 h-3.5" />5분
                         </button>
                       </div>
 
@@ -270,41 +278,44 @@ export const TimelineRecommendStep: React.FC = () => {
                         <button
                           type="button"
                           disabled={!canMoveUp}
+                          aria-label="위로 이동"
                           onClick={() => moveTimelineItem(item.id, 'up')}
-                          className={`p-1.5 rounded-lg border ${
+                          className={`p-2 rounded-lg border ${
                             canMoveUp
-                              ? 'bg-white border-[#CBD5E1] text-[#334155]'
-                              : 'border-[#F1F5F9] text-[#CBD5E1] cursor-not-allowed'
+                              ? 'bg-white border-surface-outline-variant text-surface-on-variant'
+                              : 'border-surface-soft text-surface-outline-variant cursor-not-allowed'
                           }`}
                         >
-                          <ArrowUp className="w-3.5 h-3.5" />
+                          <ArrowUp className="w-4 h-4" />
                         </button>
                         <button
                           type="button"
                           disabled={!canMoveDown}
+                          aria-label="아래로 이동"
                           onClick={() => moveTimelineItem(item.id, 'down')}
-                          className={`p-1.5 rounded-lg border ${
+                          className={`p-2 rounded-lg border ${
                             canMoveDown
-                              ? 'bg-white border-[#CBD5E1] text-[#334155]'
-                              : 'border-[#F1F5F9] text-[#CBD5E1] cursor-not-allowed'
+                              ? 'bg-white border-surface-outline-variant text-surface-on-variant'
+                              : 'border-surface-soft text-surface-outline-variant cursor-not-allowed'
                           }`}
                         >
-                          <ArrowDown className="w-3.5 h-3.5" />
+                          <ArrowDown className="w-4 h-4" />
                         </button>
                         <button
                           type="button"
                           onClick={() => setReplacingItemId(item.id)}
-                          className="px-2.5 py-1.5 rounded-lg bg-[#EFF6FF] text-[#2563EB] font-extrabold text-[12px] flex items-center gap-1 whitespace-nowrap"
+                          className={`px-2.5 py-2 rounded-lg ${accentContainer} ${accentText} font-extrabold text-caption flex items-center gap-1 whitespace-nowrap`}
                         >
-                          <RefreshCw className="w-3 h-3" />
+                          <RefreshCw className="w-3.5 h-3.5" />
                           변경
                         </button>
                         <button
                           type="button"
+                          aria-label="삭제"
                           onClick={() => deleteTimelineItem(item.id)}
-                          className="p-1.5 rounded-lg border border-[#FEE2E2] bg-white text-[#DC2626]"
+                          className="p-2 rounded-lg border border-error-container bg-white text-error"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -320,9 +331,9 @@ export const TimelineRecommendStep: React.FC = () => {
       <button
         type="button"
         onClick={confirmTimeline}
-        className="w-full py-4 bg-gradient-to-r from-[#132B45] to-[#1E3A8A] text-white rounded-2xl text-[16px] font-black shadow-md hover:from-[#1E3A8A] hover:to-[#2563EB] active:scale-98 transition-all flex items-center justify-center gap-2"
+        className={`w-full py-3.5 ${accentBg} text-white rounded-2xl text-body font-black shadow-md hover:opacity-95 active:scale-98 transition-all flex items-center justify-center gap-2`}
       >
-        <CheckCircle2 className="w-4 h-4 text-[#93C5FD]" />
+        <CheckCircle2 className="w-4 h-4 text-white/90" />
         <span>타임라인 확정하고 길 안내 시작</span>
       </button>
 
@@ -337,21 +348,21 @@ export const TimelineRecommendStep: React.FC = () => {
           {mockTimelinePlaces.map((place) => (
             <li
               key={place.id}
-              className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#EEF2F6] flex items-center gap-3"
+              className="p-4 rounded-2xl bg-surface-bright border border-surface-container flex items-center gap-3"
             >
               <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[12px] font-bold bg-[#E1EDFB] text-[#17365D] px-2 py-0.5 rounded whitespace-nowrap">
+                  <span className={`text-caption font-bold ${accentContainer} ${accentOnContainer} px-2 py-0.5 rounded whitespace-nowrap`}>
                     {place.category}
                   </span>
-                  <span className="text-[12px] font-semibold bg-white border border-[#E2E8F0] text-[#64748B] px-2 py-0.5 rounded whitespace-nowrap">
+                  <span className="text-caption font-semibold bg-white border border-surface-container-high text-surface-outline px-2 py-0.5 rounded whitespace-nowrap">
                     {boundaryLabelOf(place.boundary)}
                   </span>
                 </div>
-                <span className="text-[16px] font-extrabold text-[#0F172A] block leading-snug">
+                <span className="text-body font-extrabold text-surface-on-surface block leading-snug">
                   {place.name}
                 </span>
-                <span className="text-[13px] text-[#64748B] block leading-snug">
+                <span className="text-label-sm text-surface-outline block leading-snug">
                   {place.defaultDurationMinutes}분 · {place.defaultCost}
                 </span>
               </div>
@@ -365,7 +376,7 @@ export const TimelineRecommendStep: React.FC = () => {
                   }
                   closeSheet();
                 }}
-                className="shrink-0 px-4 py-2.5 bg-[#132B45] text-white rounded-xl text-[14px] font-bold hover:bg-[#1E3A8A] whitespace-nowrap"
+                className={`shrink-0 px-4 py-2.5 ${accentBg} text-white rounded-xl text-label font-bold hover:opacity-90 whitespace-nowrap`}
               >
                 {replacingItemId ? '변경' : '추가'}
               </button>

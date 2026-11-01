@@ -126,7 +126,7 @@ export const BookingView: React.FC = () => {
       : '좌석 선택';
 
   return (
-    <div className="flex-1 flex flex-col bg-[#F4F6F9]">
+    <div className="flex-1 flex flex-col bg-surface-container-low">
       <TopAppBar
         title={headerTitle}
         showBack={step !== 'search'}
@@ -148,9 +148,9 @@ export const BookingView: React.FC = () => {
           />
 
           {/* 안내 배너 */}
-          <div className="p-4 rounded-3xl bg-white border border-[#EEF2F6] text-xs space-y-2">
-            <h4 className="font-extrabold text-[#0F172A]">모바일 승차권 예매 안내</h4>
-            <ul className="space-y-1 text-[#64748B] text-[11px] list-disc pl-4 leading-relaxed">
+          <div className="p-4 rounded-3xl bg-white border border-surface-container text-caption space-y-2">
+            <h4 className="font-extrabold text-surface-on-surface">모바일 승차권 예매 안내</h4>
+            <ul className="space-y-1 text-surface-outline text-caption-sm list-disc pl-4 leading-relaxed">
               <li>고속·시외버스 모두 모바일 승차권 QR코드로 검표원 또는 단말기에 태그할 수 있습니다.</li>
               <li>출발 1시간 전까지는 취소 수수료가 전액 면제됩니다.</li>
               <li>AI 이동 비서가 터미널 이동 소요시간과 권장 출발시간을 자동으로 안내합니다.</li>
@@ -163,22 +163,22 @@ export const BookingView: React.FC = () => {
       {step === 'results' && (
         <div className="flex-1 flex flex-col p-4 space-y-3 pb-8">
           {/* Header Bar */}
-          <div className="bg-white p-3.5 rounded-2xl border border-[#EEF2F6] flex items-center justify-between shadow-xs gap-2">
+          <div className="bg-white p-3.5 rounded-2xl border border-surface-container flex items-center justify-between shadow-xs gap-2">
             <div className="min-w-0">
               <div className="flex items-center gap-2.5">
-                <span className="text-xs text-[#475569] font-bold whitespace-nowrap">
+                <span className="text-caption text-surface-subtle font-bold whitespace-nowrap">
                   {searchCriteria.date}
                 </span>
-                <span className="h-3.5 w-px bg-[#CBD5E1] shrink-0" aria-hidden="true" />
-                <span className="text-xs font-extrabold text-[#2563EB] whitespace-nowrap">
+                <span className="h-3.5 w-px bg-surface-outline-variant shrink-0" aria-hidden="true" />
+                <span className="text-caption font-extrabold text-express whitespace-nowrap">
                   {String(searchCriteria.departureHour).padStart(2, '0')}:00시 이후
                 </span>
               </div>
               <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#132B45] text-white">
+                <span className="text-caption-xs font-extrabold px-2 py-0.5 rounded-full bg-primary text-white">
                   고속·시외 통합
                 </span>
-                <span className="text-sm font-extrabold text-[#0F172A]">
+                <span className="text-label font-extrabold text-surface-on-surface">
                   {searchCriteria.departure} → {searchCriteria.arrival} ({filteredSchedules.length}편)
                 </span>
               </div>
@@ -186,7 +186,7 @@ export const BookingView: React.FC = () => {
             <button
               type="button"
               onClick={() => setStep('search')}
-              className="text-xs text-[#2563EB] font-bold px-3 py-1.5 rounded-xl bg-[#EFF6FF] hover:bg-[#DBEAFE] transition-colors whitespace-nowrap shrink-0"
+              className="text-caption text-express font-bold px-3 py-1.5 rounded-xl bg-express-container hover:bg-express-soft transition-colors whitespace-nowrap shrink-0"
             >
               조건 변경
             </button>
@@ -199,10 +199,10 @@ export const BookingView: React.FC = () => {
                 key={grade}
                 type="button"
                 onClick={() => setSelectedGrade(grade)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-caption font-semibold whitespace-nowrap transition-all ${
                   selectedGrade === grade
-                    ? 'bg-[#132B45] text-white shadow-xs'
-                    : 'bg-white text-[#64748B] border border-[#CBD5E1] hover:text-[#0F172A]'
+                    ? 'bg-primary text-white shadow-xs'
+                    : 'bg-white text-surface-outline border border-surface-outline-variant hover:text-surface-on-surface'
                 }`}
               >
                 {grade}
@@ -212,11 +212,11 @@ export const BookingView: React.FC = () => {
 
           {/* Schedules List */}
           {filteredSchedules.length === 0 ? (
-            <div className="bg-white rounded-3xl p-8 text-center border border-[#EEF2F6] space-y-2">
-              <p className="text-sm font-extrabold text-[#0F172A]">
+            <div className="bg-white rounded-3xl p-8 text-center border border-surface-container space-y-2">
+              <p className="text-label font-extrabold text-surface-on-surface">
                 선택하신 조건의 운행 버스가 없습니다.
               </p>
-              <p className="text-xs text-[#64748B]">
+              <p className="text-caption text-surface-outline">
                 출발 시간을 앞당기거나 버스 등급 필터를 &apos;전체&apos;로 변경해 보세요.
               </p>
             </div>
@@ -260,13 +260,16 @@ export const BookingView: React.FC = () => {
         />
       )}
 
-      {/* STEP 5: 결제 시뮬레이션 모달 */}
+      {/* STEP 5: 결제 전용 페이지 */}
       {selectedSchedule && (
         <PaymentModal
           isOpen={isPaymentModalOpen}
           onClose={() => setIsPaymentModalOpen(false)}
           onSuccess={handlePaymentSuccess}
           totalFee={totalFee}
+          schedule={selectedSchedule}
+          seats={selectedSeats}
+          date={searchCriteria.date}
         />
       )}
 

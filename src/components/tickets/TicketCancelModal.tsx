@@ -21,38 +21,38 @@ export const TicketCancelModal: React.FC<TicketCancelModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-xs">
-      <div className="bg-white rounded-t-3xl w-full max-w-sm p-5 shadow-2xl border border-[#CBD5E1] animate-in slide-in-from-bottom-5 space-y-4">
+    <div className="fixed inset-0 z-dialog flex items-end justify-center bg-black/40 backdrop-blur-xs">
+      <div className="bg-white rounded-t-3xl w-full max-w-sm p-5 shadow-2xl border border-surface-outline-variant animate-in slide-in-from-bottom-5 space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between pb-2 border-b border-[#EEF2F6]">
-          <div className="flex items-center gap-2 text-[#DC2626]">
+        <div className="flex items-center justify-between pb-2 border-b border-surface-container">
+          <div className="flex items-center gap-2 text-error">
             <AlertTriangle className="w-5 h-5" />
-            <h3 className="font-extrabold text-base text-[#0F172A]">승차권 예매 취소</h3>
+            <h3 className="font-extrabold text-body text-surface-on-surface">승차권 예매 취소</h3>
           </div>
-          <button onClick={onClose} className="p-1 text-[#64748B] hover:text-[#0F172A]">
+          <button onClick={onClose} className="p-1 text-surface-outline hover:text-surface-on-surface">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-3 bg-[#F8FAFC] rounded-2xl border border-[#EEF2F6] space-y-1 text-xs">
-          <div className="font-bold text-[#0F172A]">
+        <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container space-y-1 text-caption">
+          <div className="font-bold text-surface-on-surface">
             {ticket.busSchedule.departureStation} → {ticket.busSchedule.arrivalStation} ({ticket.busSchedule.departureTime})
           </div>
-          <div className="text-[#64748B]">좌석 {ticket.seatNumbers.join(', ')}번 · {ticket.travelDate}</div>
+          <div className="text-surface-outline">좌석 {ticket.seatNumbers.join(', ')}번 · {ticket.travelDate}</div>
         </div>
 
         {/* Refund Policy */}
-        <div className="p-3 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] space-y-2 text-xs">
-          <div className="flex justify-between font-bold text-[#1D4ED8]">
+        <div className="p-3 rounded-2xl bg-express-container border border-express-border space-y-2 text-caption">
+          <div className="flex justify-between font-bold text-express-on-container">
             <span>취소 수수료 안내</span>
             <span>전액 환불 (0원)</span>
           </div>
-          <p className="text-[11px] text-[#1E3A8A]">
+          <p className="text-caption-sm text-primary-hover">
             출발 1시간 이전 취소 건으로 취소 수수료가 부과되지 않습니다.
           </p>
-          <div className="flex justify-between pt-1 border-t border-[#BFDBFE] text-sm">
-            <span className="font-bold text-[#0F172A]">환불 예정 금액</span>
-            <span className="font-black text-[#2563EB]">{formatPrice(ticket.totalFee)}</span>
+          <div className="flex justify-between pt-1 border-t border-express-border text-label">
+            <span className="font-bold text-surface-on-surface">환불 예정 금액</span>
+            <span className="font-black text-express">{formatPrice(ticket.totalFee)}</span>
           </div>
         </div>
 
@@ -60,14 +60,14 @@ export const TicketCancelModal: React.FC<TicketCancelModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 bg-[#EEF2F6] text-[#334155] rounded-xl text-xs font-bold hover:bg-[#E2E8F0] transition-colors"
+            className="flex-1 py-3.5 bg-surface-container text-surface-on-variant rounded-2xl text-body-sm font-bold hover:bg-surface-container-high transition-colors"
           >
             유지하기
           </button>
           <button
             type="button"
             onClick={onConfirmCancel}
-            className="flex-1 py-3 bg-[#DC2626] text-white rounded-xl text-xs font-bold hover:bg-[#B91C1C] transition-colors shadow-md"
+            className="flex-1 py-3.5 bg-error text-white rounded-2xl text-body-sm font-bold hover:bg-[#B91C1C] transition-colors shadow-md"
           >
             예매 취소 확정
           </button>

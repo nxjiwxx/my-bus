@@ -67,6 +67,7 @@ const config: Config = {
           'on-container': '#1D4ED8',
           border: '#BFDBFE',
           soft: '#DBEAFE',
+          light: '#93C5FD',
         },
         intercity: {
           DEFAULT: '#059669', // Service Intercity / 50

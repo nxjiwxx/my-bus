@@ -26,19 +26,19 @@ export const RouteMapSheet: React.FC<RouteMapSheetProps> = ({ isOpen, onClose, s
       subtitle={`${schedule.departureStation} → ${schedule.arrivalStation} · ${schedule.company} ${schedule.grade}`}
     >
       {/* 요약 */}
-      <div className="rounded-2xl bg-[#F8FAFC] border border-[#EEF2F6] divide-y divide-[#EEF2F6] mb-5">
-        <div className="flex items-center justify-between px-4 py-2.5 text-xs">
-          <span className="text-[#64748B]">출발 · 도착</span>
-          <span className="font-extrabold text-[#0F172A]">
+      <div className="rounded-2xl bg-surface-bright border border-surface-container divide-y divide-surface-container mb-5">
+        <div className="flex items-center justify-between px-4 py-2.5 text-caption">
+          <span className="text-surface-outline">출발 · 도착</span>
+          <span className="font-extrabold text-surface-on-surface">
             {schedule.departureTime} → {schedule.arrivalTime}
           </span>
         </div>
-        <div className="flex items-center justify-between px-4 py-2.5 text-xs">
-          <span className="text-[#64748B]">총 소요시간</span>
-          <span className="font-extrabold text-[#0F172A]">{schedule.duration}</span>
+        <div className="flex items-center justify-between px-4 py-2.5 text-caption">
+          <span className="text-surface-outline">총 소요시간</span>
+          <span className="font-extrabold text-surface-on-surface">{schedule.duration}</span>
         </div>
-        <div className="flex items-center justify-between px-4 py-2.5 text-xs">
-          <span className="text-[#64748B]">승차장</span>
+        <div className="flex items-center justify-between px-4 py-2.5 text-caption">
+          <span className="text-surface-outline">승차장</span>
           <span className="font-extrabold" style={{ color: lineColor }}>
             {schedule.platform}
           </span>
@@ -54,7 +54,7 @@ export const RouteMapSheet: React.FC<RouteMapSheetProps> = ({ isOpen, onClose, s
 
           return (
             <li key={stop.name} className="relative flex gap-3 pb-6 last:pb-0">
-              <span className="w-11 shrink-0 text-right text-xs font-black text-[#0F172A] tabular-nums pt-0.5">
+              <span className="w-11 shrink-0 text-right text-caption font-black text-surface-on-surface tabular-nums pt-0.5">
                 {stop.time}
               </span>
 
@@ -83,36 +83,36 @@ export const RouteMapSheet: React.FC<RouteMapSheetProps> = ({ isOpen, onClose, s
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span
-                    className={`text-sm tracking-tight ${
-                      isTerminal ? 'font-black text-[#0F172A]' : 'font-bold text-[#334155]'
+                    className={`text-label tracking-tight ${
+                      isTerminal ? 'font-black text-surface-on-surface' : 'font-bold text-surface-on-variant'
                     }`}
                   >
                     {stop.name}
                   </span>
                   {isFirst && (
-                    <span className="text-[10px] font-bold text-white px-1.5 py-0.5 rounded whitespace-nowrap" style={{ backgroundColor: lineColor }}>
+                    <span className="text-caption-xs font-bold text-white px-1.5 py-0.5 rounded whitespace-nowrap" style={{ backgroundColor: lineColor }}>
                       기점
                     </span>
                   )}
                   {isLast && (
-                    <span className="text-[10px] font-bold text-white px-1.5 py-0.5 rounded bg-[#0F172A] whitespace-nowrap">
+                    <span className="text-caption-xs font-bold text-white px-1.5 py-0.5 rounded bg-surface-on-surface whitespace-nowrap">
                       종점
                     </span>
                   )}
                   {stop.kind === 'rest' && (
-                    <span className="text-[10px] font-bold text-[#B45309] bg-[#FEF3C7] px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 whitespace-nowrap">
+                    <span className="text-caption-xs font-bold text-warning-on-container bg-warning-container px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 whitespace-nowrap">
                       <Coffee className="w-2.5 h-2.5" /> 휴게소
                     </span>
                   )}
                 </div>
-                {stop.note && <p className="text-[11px] text-[#64748B] mt-0.5">{stop.note}</p>}
+                {stop.note && <p className="text-caption-sm text-surface-outline mt-0.5">{stop.note}</p>}
               </div>
             </li>
           );
         })}
       </ol>
 
-      <p className="mt-5 text-[11px] text-[#94A3B8] leading-relaxed flex items-start gap-1.5">
+      <p className="mt-5 text-caption-sm text-surface-outline leading-relaxed flex items-start gap-1.5">
         <Clock className="w-3.5 h-3.5 shrink-0 mt-0.5" />
         <span>경유지 도착 시각은 교통 상황에 따라 달라질 수 있는 예상 시각입니다.</span>
       </p>

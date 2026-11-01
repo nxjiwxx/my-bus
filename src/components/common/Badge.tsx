@@ -16,19 +16,19 @@ export const Badge: React.FC<BadgeProps> = ({
   className,
 }) => {
   const sizeClasses = {
-    sm: 'text-[11px] px-2 py-0.5 rounded-md font-semibold tracking-tight',
-    md: 'text-xs px-2.5 py-1 rounded-lg font-semibold',
+    sm: 'text-caption-sm px-2 py-0.5 rounded-md font-semibold tracking-tight',
+    md: 'text-caption px-2.5 py-1 rounded-lg font-semibold',
   };
 
   const variantClasses = {
-    express: 'bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]',
-    intercity: 'bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]',
-    primary: 'bg-[#E1EDFB] text-[#17365D] border border-[#BDD7F5]',
-    ai: 'bg-gradient-to-r from-[#F5F3FF] to-[#EFF6FF] text-[#4F46E5] border border-[#DDD6FE]',
-    warning: 'bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]',
-    error: 'bg-[#FEE2E2] text-[#991B1B] border border-[#FECACA]',
-    surface: 'bg-[#EEF2F6] text-[#334155]',
-    outline: 'border border-[#CBD5E1] text-[#334155] bg-transparent',
+    express: 'bg-express-container text-express-on-container border border-express-border',
+    intercity: 'bg-intercity-container text-intercity-on-container border border-intercity-border',
+    primary: 'bg-primary-container text-primary-on-container border border-[#BDD7F5]',
+    ai: 'bg-gradient-to-r from-ai-container to-express-container text-ai-on-container border border-ai-border',
+    warning: 'bg-warning-container text-warning-on-container border border-[#FDE68A]',
+    error: 'bg-error-container text-error-on-container border border-[#FECACA]',
+    surface: 'bg-surface-container text-surface-on-variant',
+    outline: 'border border-surface-outline-variant text-surface-on-variant bg-transparent',
   };
 
   return (
@@ -65,7 +65,7 @@ export const BusGradeBadge: React.FC<{ grade: BusGrade; className?: string }> = 
   className,
 }) => {
   return (
-    <span className="text-[11px] font-medium text-[#64748B] bg-[#F1F5F9] px-1.5 py-0.5 rounded">
+    <span className="text-caption-sm font-medium text-surface-outline bg-surface-soft px-1.5 py-0.5 rounded">
       {grade}
     </span>
   );

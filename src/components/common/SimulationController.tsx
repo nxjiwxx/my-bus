@@ -99,21 +99,21 @@ export const SimulationController: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-[#CBD5E1] p-4 shadow-xl max-w-sm w-full space-y-3">
+    <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-surface-outline-variant p-4 shadow-xl max-w-sm w-full space-y-3">
       {/* Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-[#F1F5F9]">
+      <div className="flex items-center justify-between pb-2 border-b border-surface-soft">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white shadow-xs">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-ai-primary to-ai-on-container flex items-center justify-center text-white shadow-xs">
             <SlidersHorizontal className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="font-bold text-sm text-[#0F172A] leading-tight">AI 상황 시뮬레이터</h4>
-            <p className="text-[11px] text-[#64748B]">평가 및 검증용 실시간 제어 도구</p>
+            <h4 className="font-bold text-label text-surface-on-surface leading-tight">AI 상황 시뮬레이터</h4>
+            <p className="text-caption-sm text-surface-outline">평가 및 검증용 실시간 제어 도구</p>
           </div>
         </div>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-1 text-[#64748B] hover:text-[#0F172A] rounded-lg transition-transform"
+          className="p-1 text-surface-outline hover:text-surface-on-surface rounded-lg transition-transform"
         >
           <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         </button>
@@ -121,7 +121,7 @@ export const SimulationController: React.FC = () => {
 
       {isOpen && (
         <div className="space-y-1.5">
-          <p className="text-[11px] text-[#64748B] leading-relaxed">
+          <p className="text-caption-sm text-surface-outline leading-relaxed">
             아래 시나리오를 클릭하면 앱 화면의 AI 제안 카드, 출발시간, 상태가 즉시 변경됩니다.
           </p>
 
@@ -136,33 +136,33 @@ export const SimulationController: React.FC = () => {
                   onClick={st.action}
                   className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-start gap-2.5 ${
                     isCurrent
-                      ? 'bg-[#132B45] text-white border-[#132B45] shadow-sm'
-                      : 'bg-[#F8FAFC] hover:bg-[#EEF2F6] text-[#1E293B] border-[#E2E8F0]'
+                      ? 'bg-primary text-white border-primary shadow-sm'
+                      : 'bg-surface-bright hover:bg-surface-container text-[#1E293B] border-surface-container-high'
                   }`}
                 >
                   <div
                     className={`p-1.5 rounded-lg shrink-0 mt-0.5 ${
-                      isCurrent ? 'bg-white/20 text-white' : 'bg-[#E2E8F0] text-[#475569]'
+                      isCurrent ? 'bg-white/20 text-white' : 'bg-surface-container-high text-surface-subtle'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold leading-tight truncate">{st.label}</span>
+                      <span className="text-caption font-bold leading-tight truncate">{st.label}</span>
                       <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                        className={`text-caption-xs px-1.5 py-0.5 rounded-full font-medium ${
                           isCurrent
                             ? 'bg-white/25 text-white'
-                            : 'bg-[#EEF2F6] text-[#64748B]'
+                            : 'bg-surface-container text-surface-outline'
                         }`}
                       >
                         {st.badge}
                       </span>
                     </div>
                     <p
-                      className={`text-[11px] mt-0.5 truncate ${
-                        isCurrent ? 'text-white/80' : 'text-[#64748B]'
+                      className={`text-caption-sm mt-0.5 truncate ${
+                        isCurrent ? 'text-white/80' : 'text-surface-outline'
                       }`}
                     >
                       {st.sublabel}
@@ -174,12 +174,12 @@ export const SimulationController: React.FC = () => {
           </div>
 
           {/* 맞춤형 타임라인 6단계 빠른 시연 제어 */}
-          <div className="pt-2.5 border-t border-[#F1F5F9] space-y-1.5">
+          <div className="pt-2.5 border-t border-surface-soft space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-extrabold text-[#4F46E5] flex items-center gap-1">
+              <span className="text-caption-sm font-extrabold text-ai-on-container flex items-center gap-1">
                 <Sparkles className="w-3 h-3" /> 맞춤형 타임라인 (STEP 01~06)
               </span>
-              <span className="text-[10px] text-[#64748B]">신규 기능</span>
+              <span className="text-caption-xs text-surface-outline">신규 기능</span>
             </div>
             <div className="grid grid-cols-2 gap-1">
               <button
@@ -188,7 +188,7 @@ export const SimulationController: React.FC = () => {
                   finishTimelineWayfinding();
                   setCurrentTab('timeline');
                 }}
-                className="py-1.5 px-2 rounded-lg bg-[#F1F5F9] text-[#334155] text-[10px] font-bold hover:bg-[#E2E8F0] transition-colors"
+                className="py-1.5 px-2 rounded-lg bg-surface-soft text-surface-on-variant text-caption-xs font-bold hover:bg-surface-container-high transition-colors"
               >
                 0. 초기 Empty 화면
               </button>
@@ -198,7 +198,7 @@ export const SimulationController: React.FC = () => {
                   setTimelineStep('config');
                   setCurrentTab('timeline');
                 }}
-                className="py-1.5 px-2 rounded-lg bg-[#EFF6FF] text-[#1D4ED8] text-[10px] font-bold hover:bg-[#DBEAFE] transition-colors"
+                className="py-1.5 px-2 rounded-lg bg-express-container text-express-on-container text-caption-xs font-bold hover:bg-express-soft transition-colors"
               >
                 1. 조건·여유시간
               </button>
@@ -209,7 +209,7 @@ export const SimulationController: React.FC = () => {
                   setTimelineStep('recommendation');
                   setCurrentTab('timeline');
                 }}
-                className="py-1.5 px-2 rounded-lg bg-[#F5F3FF] text-[#4F46E5] text-[10px] font-bold hover:bg-[#EDE9FE] transition-colors"
+                className="py-1.5 px-2 rounded-lg bg-ai-container text-ai-on-container text-caption-xs font-bold hover:bg-[#EDE9FE] transition-colors"
               >
                 2. 추천·편집
               </button>
@@ -220,7 +220,7 @@ export const SimulationController: React.FC = () => {
                   setTimelineStep('wayfinding');
                   setCurrentTab('timeline');
                 }}
-                className="py-1.5 px-2 rounded-lg bg-[#ECFDF5] text-[#059669] text-[10px] font-bold hover:bg-[#D1FAE5] transition-colors"
+                className="py-1.5 px-2 rounded-lg bg-intercity-container text-intercity text-caption-xs font-bold hover:bg-[#D1FAE5] transition-colors"
               >
                 3. 길안내·탑승
               </button>
@@ -234,7 +234,7 @@ export const SimulationController: React.FC = () => {
                   setCurrentTab('timeline');
                   simulateActivityDelay();
                 }}
-                className="py-1.5 px-2 rounded-lg bg-[#FEF3C7] text-[#92400E] text-[10px] font-bold hover:bg-[#FDE68A] transition-colors"
+                className="py-1.5 px-2 rounded-lg bg-warning-container text-[#92400E] text-caption-xs font-bold hover:bg-[#FDE68A] transition-colors"
               >
                 ⚡ 활동 10분 지연 재조정
               </button>
@@ -246,18 +246,18 @@ export const SimulationController: React.FC = () => {
                   setCurrentTab('timeline');
                   triggerBoardingAlert();
                 }}
-                className="py-1.5 px-2 rounded-lg bg-[#132B45] text-white text-[10px] font-bold hover:bg-[#1E3A8A] transition-colors"
+                className="py-1.5 px-2 rounded-lg bg-primary text-white text-caption-xs font-bold hover:bg-primary-hover transition-colors"
               >
                 🔔 승차장 이동 알림
               </button>
             </div>
           </div>
 
-          <div className="pt-2 flex items-center justify-between text-[11px] text-[#64748B] border-t border-[#F1F5F9]">
-            <span>현재 상태: <strong className="text-[#132B45]">{simulationState}</strong></span>
+          <div className="pt-2 flex items-center justify-between text-caption-sm text-surface-outline border-t border-surface-soft">
+            <span>현재 상태: <strong className="text-primary">{simulationState}</strong></span>
             <button
               onClick={resetToDefaultBooked}
-              className="flex items-center gap-1 text-[#2563EB] hover:underline font-semibold"
+              className="flex items-center gap-1 text-express hover:underline font-semibold"
             >
               <RefreshCw className="w-3 h-3" /> 초기화
             </button>

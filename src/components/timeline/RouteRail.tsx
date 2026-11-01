@@ -52,8 +52,8 @@ export const RouteRow: React.FC<RouteRowProps> = ({
     <div className="flex">
       {/* 시각 */}
       <div className="w-12 shrink-0 text-right pr-2" style={{ paddingTop: Math.max(0, nodeY - 8) }}>
-        {time && <span className="block text-xs font-black text-[#0F172A] tabular-nums leading-4">{time}</span>}
-        {timeSub && <span className="block text-[10px] font-medium text-[#94A3B8] leading-3 mt-0.5">{timeSub}</span>}
+        {time && <span className="block text-caption font-black text-surface-on-surface tabular-nums leading-4">{time}</span>}
+        {timeSub && <span className="block text-caption-xs font-medium text-surface-outline leading-3 mt-0.5">{timeSub}</span>}
       </div>
 
       {/* 노선 레일 */}
@@ -118,8 +118,8 @@ export const WalkSegment: React.FC<{
   note?: string;
 }> = ({ minutes, topColor, note }) => (
   <RouteRow node="none" topColor={topColor} contentClassName="py-2">
-    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#475569] bg-white border border-[#E2E8F0] rounded-full pl-2 pr-3 py-1 whitespace-nowrap shadow-xs">
-      <Footprints className="w-3.5 h-3.5 text-[#2563EB]" />
+    <span className="inline-flex items-center gap-1.5 text-caption-sm font-bold text-surface-subtle bg-white border border-surface-container-high rounded-full pl-2 pr-3 py-1 whitespace-nowrap shadow-xs">
+      <Footprints className="w-3.5 h-3.5 text-express" />
       도보 {minutes}분{note ? ` · ${note}` : ''}
     </span>
   </RouteRow>

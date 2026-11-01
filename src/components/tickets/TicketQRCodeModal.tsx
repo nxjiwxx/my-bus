@@ -21,17 +21,17 @@ export const TicketQRCodeModal: React.FC<TicketQRCodeModalProps> = ({
   const isExpress = ticket.busSchedule.busType === 'express';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-dialog flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-in fade-in duration-150">
       <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-white/20 text-center space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between pb-2 border-b border-[#EEF2F6]">
+        <div className="flex items-center justify-between pb-2 border-b border-surface-container">
           <div className="flex items-center gap-1.5">
-            <Sun className="w-4 h-4 text-[#F59E0B]" />
-            <span className="text-xs font-bold text-[#64748B]">화면 밝기가 최적화되었습니다</span>
+            <Sun className="w-4 h-4 text-warning" />
+            <span className="text-caption font-bold text-surface-outline">화면 밝기가 최적화되었습니다</span>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-[#64748B] hover:text-[#0F172A] rounded-lg"
+            className="p-1 text-surface-outline hover:text-surface-on-surface rounded-lg"
           >
             <X className="w-5 h-5" />
           </button>
@@ -41,30 +41,30 @@ export const TicketQRCodeModal: React.FC<TicketQRCodeModalProps> = ({
         <div>
           <div className="flex items-center justify-center gap-1.5 mb-1">
             <BusTypeBadge busType={ticket.busSchedule.busType} />
-            <span className="text-xs font-bold text-[#0F172A]">{ticket.travelDate}</span>
+            <span className="text-caption font-bold text-surface-on-surface">{ticket.travelDate}</span>
           </div>
-          <h3 className="text-xl font-black text-[#0F172A] tracking-tight">
+          <h3 className="text-title font-black text-surface-on-surface tracking-tight">
             {ticket.busSchedule.departureStation} → {ticket.busSchedule.arrivalStation}
           </h3>
           <div className="flex items-center justify-center gap-2 mt-1">
-            <span className="text-sm font-extrabold text-[#2563EB]">
+            <span className="text-label font-extrabold text-express">
               {ticket.busSchedule.departureTime} 출발
             </span>
-            <span className="text-xs font-bold bg-[#EFF6FF] text-[#1D4ED8] px-2 py-0.5 rounded-md">
+            <span className="text-caption font-bold bg-express-container text-express-on-container px-2 py-0.5 rounded-md">
               {ticket.busSchedule.platform}
             </span>
-            <span className="text-xs font-bold bg-[#F1F5F9] text-[#334155] px-2 py-0.5 rounded-md">
+            <span className="text-caption font-bold bg-surface-soft text-surface-on-variant px-2 py-0.5 rounded-md">
               좌석 {ticket.seatNumbers.join(', ')}번
             </span>
           </div>
         </div>
 
         {/* QR Code Container */}
-        <div className="p-4 bg-white rounded-2xl border-2 border-dashed border-[#CBD5E1] inline-block shadow-inner">
+        <div className="p-4 bg-white rounded-2xl border-2 border-dashed border-surface-outline-variant inline-block shadow-inner">
           {/* Custom SVG Realistic QR Code */}
           <div className="w-48 h-48 mx-auto bg-white p-2 flex flex-col items-center justify-center relative">
             <svg
-              className="w-full h-full text-[#132B45]"
+              className="w-full h-full text-primary"
               viewBox="0 0 100 100"
               fill="currentColor"
             >
@@ -112,36 +112,36 @@ export const TicketQRCodeModal: React.FC<TicketQRCodeModalProps> = ({
               <rect x="84" y="78" width="8" height="14" />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-10 h-10 rounded-xl bg-white shadow-md border border-[#E2E8F0] flex items-center justify-center font-black text-xs text-[#132B45]">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-md border border-surface-container-high flex items-center justify-center font-black text-caption text-primary">
                 MB
               </div>
             </div>
           </div>
 
           {/* Barcode graphic */}
-          <div className="mt-2 pt-2 border-t border-[#EEF2F6] flex justify-center items-center gap-0.5 h-6">
+          <div className="mt-2 pt-2 border-t border-surface-container flex justify-center items-center gap-0.5 h-6">
             {[2, 4, 1, 3, 2, 5, 1, 4, 2, 3, 1, 4, 2, 5, 1, 3, 2, 4, 1, 3, 5, 2, 1, 4].map(
               (w, idx) => (
                 <div
                   key={idx}
-                  className="bg-[#0F172A] h-full"
+                  className="bg-surface-on-surface h-full"
                   style={{ width: `${w * 1.5}px` }}
                 />
               )
             )}
           </div>
-          <span className="font-mono text-[10px] text-[#64748B] tracking-widest block mt-1">
+          <span className="font-mono text-caption-xs text-surface-outline tracking-widest block mt-1">
             {ticket.bookingNumber}
           </span>
         </div>
 
-        <p className="text-xs text-[#475569] leading-tight">
+        <p className="text-caption text-surface-subtle leading-tight">
           터미널 검표기 스캐너에 위 QR코드를 태그해 주세요.
         </p>
 
         <button
           onClick={onClose}
-          className="w-full py-3 bg-[#132B45] text-white rounded-xl text-xs font-bold hover:bg-[#1E3A8A] transition-colors"
+          className="w-full py-3.5 bg-primary text-white rounded-2xl text-body-sm font-bold hover:bg-primary-hover transition-colors"
         >
           확인 완료
         </button>

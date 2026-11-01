@@ -44,7 +44,7 @@ export const SeatPassengerSheet: React.FC<SeatPassengerSheetProps> = ({
           <button
             type="button"
             onClick={onRemove}
-            className="w-full py-3 rounded-2xl border border-[#FCA5A5] text-[#DC2626] text-xs font-bold hover:bg-[#FEF2F2] transition-colors"
+            className="w-full py-3.5 rounded-2xl border border-[#FCA5A5] text-error text-body-sm font-bold hover:bg-[#FEF2F2] transition-colors"
           >
             이 좌석 선택 해제
           </button>
@@ -62,13 +62,13 @@ export const SeatPassengerSheet: React.FC<SeatPassengerSheetProps> = ({
                 type="button"
                 onClick={() => onSelectType(type)}
                 className={`w-full px-4 py-3.5 rounded-2xl border text-left flex items-center gap-3 transition-all active:scale-99 ${
-                  isCurrent ? 'bg-[#F8FAFC]' : 'border-[#E2E8F0] hover:bg-[#F8FAFC]'
+                  isCurrent ? 'bg-surface-bright' : 'border-surface-container-high hover:bg-surface-bright'
                 }`}
                 style={isCurrent ? { borderColor: accent, boxShadow: `0 0 0 1px ${accent}` } : undefined}
               >
                 <span
                   className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                    isCurrent ? 'text-white' : 'border-[#CBD5E1] bg-white'
+                    isCurrent ? 'text-white' : 'border-surface-outline-variant bg-white'
                   }`}
                   style={isCurrent ? { backgroundColor: accent, borderColor: accent } : undefined}
                 >
@@ -76,21 +76,21 @@ export const SeatPassengerSheet: React.FC<SeatPassengerSheetProps> = ({
                 </span>
                 <span className="flex-1 min-w-0">
                   <span className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-sm font-extrabold text-[#0F172A]">{info.label}</span>
+                    <span className="text-label font-extrabold text-surface-on-surface">{info.label}</span>
                     {type !== 'adult' && (
-                      <span className="text-[10px] font-bold text-[#2563EB] bg-[#EFF6FF] px-1.5 py-0.5 rounded whitespace-nowrap">
+                      <span className="text-caption-xs font-bold text-express bg-express-container px-1.5 py-0.5 rounded whitespace-nowrap">
                         {info.discountLabel}
                       </span>
                     )}
                     {type === 'veteran' && isCurrent && isVeteranVerified && (
-                      <span className="text-[10px] font-bold text-[#059669] bg-[#ECFDF5] px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 whitespace-nowrap">
+                      <span className="text-caption-xs font-bold text-intercity bg-intercity-container px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 whitespace-nowrap">
                         <BadgeCheck className="w-3 h-3" /> 인증완료
                       </span>
                     )}
                   </span>
-                  <span className="text-[11px] text-[#64748B] block mt-0.5">{info.desc}</span>
+                  <span className="text-caption-sm text-surface-outline block mt-0.5">{info.desc}</span>
                 </span>
-                <span className="text-sm font-black text-[#132B45] whitespace-nowrap tabular-nums">
+                <span className="text-label font-black text-primary whitespace-nowrap tabular-nums">
                   {formatPrice(fare)}
                 </span>
               </button>

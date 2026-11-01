@@ -23,6 +23,7 @@ import {
 
 export const TimelineWayfindingView: React.FC = () => {
   const {
+    activeTicket,
     customTimeline,
     toggleVoiceGuide,
     speakRouteGuide,
@@ -47,6 +48,15 @@ export const TimelineWayfindingView: React.FC = () => {
 
   if (!customTimeline) return null;
 
+  const busType = activeTicket?.busSchedule.busType || 'express';
+  const isExpress = busType === 'express';
+
+  const accentText = isExpress ? 'text-express' : 'text-intercity';
+  const accentBg = isExpress ? 'bg-express' : 'bg-intercity';
+  const accentContainer = isExpress ? 'bg-express-container' : 'bg-intercity-container';
+  const accentBorder = isExpress ? 'border-express-border' : 'border-intercity-border';
+  const railPrimaryColor = isExpress ? RAIL_COLORS.active : RAIL_COLORS.boarding;
+
   const items = customTimeline.items;
   const activeIdx = Math.min(customTimeline.currentActivityIndex, items.length - 1);
   const currentItem = items[activeIdx] || items[0];
@@ -54,23 +64,19 @@ export const TimelineWayfindingView: React.FC = () => {
   const shownIdx = openIdx ?? activeIdx;
 
   const segColor = (toIdx: number) =>
-    toIdx <= activeIdx
-      ? RAIL_COLORS.done
-      : items[toIdx]?.isBoardingStep
-      ? RAIL_COLORS.boarding
-      : RAIL_COLORS.active;
+    toIdx <= activeIdx ? RAIL_COLORS.done : railPrimaryColor;
 
   return (
     <div className="p-5 pb-9 space-y-5">
       {/* 1. 상단 실시간 길 안내 요약 카드 */}
-      <section className="bg-gradient-to-br from-[#132B45] to-[#1E3A8A] text-white rounded-3xl p-4 shadow-sm space-y-3">
+      <section className="bg-gradient-to-br from-primary to-primary-hover text-white rounded-3xl p-4 shadow-sm space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <span className="relative flex h-2.5 w-2.5 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#10B981]" />
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${accentBg} opacity-75`} />
+              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${accentBg}`} />
             </span>
-            <span className="text-[18px] font-extrabold tracking-tight truncate">
+            <span className="text-title-sm font-extrabold tracking-tight truncate">
               현재: {currentItem.title}
             </span>
           </div>
@@ -78,9 +84,9 @@ export const TimelineWayfindingView: React.FC = () => {
           <button
             type="button"
             onClick={toggleVoiceGuide}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-extrabold whitespace-nowrap transition-all shrink-0 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-extrabold whitespace-nowrap transition-all shrink-0 ${
               customTimeline.voiceGuideEnabled
-                ? 'bg-[#10B981] text-white'
+                ? `${accentBg} text-white`
                 : 'bg-white/15 text-white/90 hover:bg-white/25'
             }`}
           >
@@ -99,36 +105,36 @@ export const TimelineWayfindingView: React.FC = () => {
         {/* 현재 위치 · 다음 일정 · 버스 출발 남은 시간 3열 요약 */}
         <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-white/15">
           <div className="bg-white/10 rounded-2xl px-3 py-2">
-            <span className="text-[11px] text-[#93C5FD] font-bold block">진행 시간 · 위치</span>
-            <span className="text-[15px] font-extrabold text-white block truncate mt-0.5">
+            <span className="text-caption-sm text-express-light font-bold block">진행 시간 · 위치</span>
+            <span className="text-body-sm font-extrabold text-white block truncate mt-0.5 tabular-nums">
               {currentItem.startTime}~{currentItem.endTime}
             </span>
-            <span className="text-[12px] text-white/75 block truncate">{currentItem.guideFloor}</span>
+            <span className="text-caption text-white/75 block truncate">{currentItem.guideFloor}</span>
           </div>
           <div className="bg-white/10 rounded-2xl px-3 py-2">
-            <span className="text-[11px] text-[#93C5FD] font-bold block">다음 일정</span>
-            <span className="text-[15px] font-extrabold text-white block truncate mt-0.5">
+            <span className="text-caption-sm text-express-light font-bold block">다음 일정</span>
+            <span className="text-body-sm font-extrabold text-white block truncate mt-0.5">
               {nextItem ? nextItem.title : '버스 탑승'}
             </span>
-            <span className="text-[12px] text-white/75 block truncate">
+            <span className="text-caption text-white/75 block truncate">
               {nextItem ? `도보 ${currentItem.transitTimeToNext}분` : customTimeline.boardingPlatform}
             </span>
           </div>
-          <div className="bg-[#059669]/35 border border-[#34D399]/40 rounded-2xl px-3 py-2">
-            <span className="text-[11px] text-[#6EE7B7] font-bold block">
+          <div className={`${accentBg}/40 border border-white/25 rounded-2xl px-3 py-2`}>
+            <span className="text-caption-sm text-white/85 font-bold block">
               출발 {customTimeline.busDepartureTime}
             </span>
-            <span className="text-[15px] font-black text-white block truncate mt-0.5">
+            <span className="text-body-sm font-black text-white block truncate mt-0.5 tabular-nums">
               {customTimeline.totalAvailableMinutes}분 남음
             </span>
-            <span className="text-[12px] text-[#A7F3D0] block truncate">
+            <span className="text-caption text-white/85 block truncate tabular-nums">
               여유 {customTimeline.actualBufferMinutes}분
             </span>
           </div>
         </div>
 
         {customTimeline.voiceGuideEnabled && (
-          <div className="px-3 py-2 rounded-2xl bg-[#065F46]/90 border border-[#34D399]/30 flex items-center justify-between gap-2 text-[12px] text-[#ECFDF5]">
+          <div className="px-3 py-2 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-between gap-2 text-caption text-white">
             <span className="truncate">{currentItem.routeInstruction}</span>
             <button
               type="button"
@@ -145,15 +151,15 @@ export const TimelineWayfindingView: React.FC = () => {
 
       {/* AI 지연 재조정 알림 배너 */}
       {customTimeline.isDelayedAdjusted && (
-        <div className="p-3.5 rounded-2xl bg-[#FEF3C7] border border-[#FCD34D] flex items-center justify-between gap-2 text-[13px]">
-          <span className="font-extrabold text-[#92400E] flex items-center gap-1.5 truncate">
-            <Sparkles className="w-4 h-4 text-[#D97706] shrink-0" />
+        <div className="p-3.5 rounded-2xl bg-warning-container border border-warning/40 flex items-center justify-between gap-2 text-label-sm">
+          <span className="font-extrabold text-warning-on-container flex items-center gap-1.5 truncate">
+            <Sparkles className="w-4 h-4 text-warning shrink-0" />
             AI 일정 재조정 완료 (탑승 여유 {customTimeline.actualBufferMinutes}분 확보)
           </span>
           <button
             type="button"
             onClick={resetTimelineToInitial}
-            className="text-[12px] font-bold text-[#92400E] underline whitespace-nowrap shrink-0"
+            className="text-caption font-bold text-warning-on-container underline whitespace-nowrap shrink-0"
           >
             원래대로
           </button>
@@ -161,12 +167,12 @@ export const TimelineWayfindingView: React.FC = () => {
       )}
 
       {/* 2. 중앙 버스 노선도형 실시간 길 안내 */}
-      <section className="bg-white rounded-3xl border border-[#E2E8F0] p-4 shadow-2xs space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-[#F1F5F9]">
-          <h3 className="text-[19px] font-extrabold text-[#0F172A] tracking-tight">
+      <section className="bg-white rounded-3xl border border-surface-container-high p-4 shadow-2xs space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-surface-soft">
+          <h3 className="text-title-sm font-extrabold text-surface-on-surface tracking-tight">
             실시간 시설 길 안내 노선도
           </h3>
-          <span className="inline-flex items-center gap-1 text-[12px] font-extrabold text-white bg-[#2563EB] px-2.5 py-1 rounded-full">
+          <span className={`inline-flex items-center gap-1 text-caption font-extrabold text-white ${accentBg} px-2.5 py-1 rounded-full`}>
             <Bus className="w-3 h-3" /> {customTimeline.boardingPlatform}행
           </span>
         </div>
@@ -181,9 +187,9 @@ export const TimelineWayfindingView: React.FC = () => {
             time={customTimeline.currentTime}
             contentClassName="pb-3"
           >
-            <div className="flex items-center justify-between text-[14px]">
-              <span className="font-bold text-[#64748B]">{customTimeline.currentLocation}</span>
-              <span className="text-[12px] font-semibold text-[#94A3B8]">출발 완료</span>
+            <div className="flex items-center justify-between text-label">
+              <span className="font-bold text-surface-outline">{customTimeline.currentLocation}</span>
+              <span className="text-caption font-semibold text-surface-outline">출발 완료</span>
             </div>
           </RouteRow>
 
@@ -195,18 +201,14 @@ export const TimelineWayfindingView: React.FC = () => {
             const isOpen = shownIdx === idx;
             const isLast = idx === items.length - 1;
             const kind = isCurrent ? 'current' : isDone ? 'done' : isBoarding ? 'terminal' : 'stop';
-            const nodeColor = isDone
-              ? RAIL_COLORS.done
-              : isBoarding
-              ? RAIL_COLORS.boarding
-              : RAIL_COLORS.active;
+            const nodeColor = isDone ? RAIL_COLORS.done : railPrimaryColor;
 
             return (
               <RouteRow
                 key={item.id}
                 node={kind}
                 nodeY={18}
-                nodeColor={isCurrent && isBoarding ? RAIL_COLORS.boarding : nodeColor}
+                nodeColor={nodeColor}
                 topColor={segColor(idx)}
                 bottomColor={isLast ? null : segColor(idx + 1)}
                 icon={
@@ -225,12 +227,12 @@ export const TimelineWayfindingView: React.FC = () => {
                 <div
                   className={`rounded-2xl border p-3.5 transition-all ${
                     isCurrent
-                      ? 'bg-[#EFF6FF] border-[#93C5FD] shadow-2xs'
+                      ? `${accentContainer} ${accentBorder} shadow-2xs`
                       : isDone
-                      ? 'bg-[#F8FAFC] border-[#E2E8F0]'
+                      ? 'bg-surface-bright border-surface-container-high'
                       : isBoarding
-                      ? 'bg-[#EBFBF5] border-[#4CD9A4]'
-                      : 'bg-white border-[#E2E8F0]'
+                      ? `${accentContainer} ${accentBorder}`
+                      : 'bg-white border-surface-container-high'
                   }`}
                 >
                   <button
@@ -240,32 +242,32 @@ export const TimelineWayfindingView: React.FC = () => {
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       {isCurrent && (
-                        <span className="text-[11px] font-extrabold text-white bg-[#2563EB] px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
+                        <span className={`text-caption-sm font-extrabold text-white ${accentBg} px-2 py-0.5 rounded-full whitespace-nowrap shrink-0`}>
                           지금 여기
                         </span>
                       )}
                       {isDone && (
-                        <span className="text-[11px] font-bold text-[#64748B] bg-[#E2E8F0] px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
+                        <span className="text-caption-sm font-bold text-surface-outline bg-surface-container-high px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
                           완료
                         </span>
                       )}
                       <span
-                        className={`text-[16px] font-extrabold truncate ${
-                          isDone ? 'text-[#94A3B8]' : 'text-[#0F172A]'
+                        className={`text-body font-extrabold truncate ${
+                          isDone ? 'text-surface-outline' : 'text-surface-on-surface'
                         }`}
                       >
                         {item.title}
                       </span>
                     </div>
-                    <span className="text-[13px] font-semibold text-[#64748B] whitespace-nowrap shrink-0">
+                    <span className="text-label-sm font-semibold text-surface-outline whitespace-nowrap shrink-0">
                       {item.guideFloor}
                     </span>
                   </button>
 
                   {isOpen && (
-                    <div className="mt-2.5 pt-2.5 border-t border-[#DBEAFE] space-y-2.5">
-                      <p className="text-[14px] text-[#334155] leading-relaxed flex items-start gap-1.5">
-                        <Footprints className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+                    <div className={`mt-2.5 pt-2.5 border-t ${accentBorder} space-y-2.5`}>
+                      <p className="text-label text-surface-on-variant leading-relaxed flex items-start gap-1.5">
+                        <Footprints className={`w-4 h-4 ${accentText} shrink-0 mt-0.5`} />
                         <span>{item.routeInstruction}</span>
                       </p>
 
@@ -273,11 +275,7 @@ export const TimelineWayfindingView: React.FC = () => {
                         <button
                           type="button"
                           onClick={nextItem ? advanceTimelineActivity : finishTimelineWayfinding}
-                          className={`w-full py-2.5 text-white rounded-xl text-[14px] font-extrabold transition-colors flex items-center justify-center gap-1.5 ${
-                            nextItem
-                              ? 'bg-[#2563EB] hover:bg-[#1D4ED8]'
-                              : 'bg-[#059669] hover:bg-[#047857]'
-                          }`}
+                          className={`w-full py-2.5 text-white rounded-xl text-label font-extrabold transition-opacity flex items-center justify-center gap-1.5 ${accentBg} hover:opacity-90`}
                         >
                           <CheckCircle2 className="w-4 h-4" />
                           <span>
@@ -290,7 +288,7 @@ export const TimelineWayfindingView: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setCurrentActivityIndex(idx)}
-                            className="w-full py-2 bg-white border border-[#CBD5E1] text-[#132B45] rounded-xl text-[13px] font-extrabold"
+                            className="w-full py-2 bg-white border border-surface-outline-variant text-primary rounded-xl text-label-sm font-extrabold"
                           >
                             이 장소부터 안내 받기
                           </button>
@@ -311,43 +309,43 @@ export const TimelineWayfindingView: React.FC = () => {
           <button
             type="button"
             onClick={simulateActivityDelay}
-            className="p-3 rounded-2xl bg-white border border-[#E2E8F0] hover:bg-[#FFFBEB] flex flex-col items-center justify-center gap-1.5 shadow-2xs"
+            className="p-3 rounded-2xl bg-white border border-surface-container-high hover:bg-warning-container/40 flex flex-col items-center justify-center gap-1.5 shadow-2xs"
           >
-            <Clock className="w-4 h-4 text-[#D97706]" />
-            <span className="text-[12px] font-extrabold text-[#0F172A] whitespace-nowrap">10분 지연</span>
+            <Clock className="w-4 h-4 text-warning-on-container" />
+            <span className="text-caption font-extrabold text-surface-on-surface whitespace-nowrap">10분 지연</span>
           </button>
           <button
             type="button"
             onClick={triggerBoardingAlert}
-            className="p-3 rounded-2xl bg-white border border-[#E2E8F0] hover:bg-[#ECFDF5] flex flex-col items-center justify-center gap-1.5 shadow-2xs"
+            className="p-3 rounded-2xl bg-white border border-surface-container-high hover:bg-intercity-container flex flex-col items-center justify-center gap-1.5 shadow-2xs"
           >
-            <Bell className="w-4 h-4 text-[#059669]" />
-            <span className="text-[12px] font-extrabold text-[#0F172A] whitespace-nowrap">승차장 알림</span>
+            <Bell className="w-4 h-4 text-intercity" />
+            <span className="text-caption font-extrabold text-surface-on-surface whitespace-nowrap">승차장 알림</span>
           </button>
           <button
             type="button"
             onClick={applyAlternativeShortCourse}
-            className="p-3 rounded-2xl bg-white border border-[#E2E8F0] hover:bg-[#EFF6FF] flex flex-col items-center justify-center gap-1.5 shadow-2xs"
+            className="p-3 rounded-2xl bg-white border border-surface-container-high hover:bg-express-container flex flex-col items-center justify-center gap-1.5 shadow-2xs"
           >
-            <RefreshCw className="w-4 h-4 text-[#2563EB]" />
-            <span className="text-[12px] font-extrabold text-[#0F172A] whitespace-nowrap">내부 코스</span>
+            <RefreshCw className="w-4 h-4 text-express" />
+            <span className="text-caption font-extrabold text-surface-on-surface whitespace-nowrap">내부 코스</span>
           </button>
           <button
             type="button"
             onClick={() => setTimelineStep('recommendation')}
-            className="p-3 rounded-2xl bg-white border border-[#E2E8F0] hover:bg-[#F8FAFC] flex flex-col items-center justify-center gap-1.5 shadow-2xs"
+            className="p-3 rounded-2xl bg-white border border-surface-container-high hover:bg-surface-bright flex flex-col items-center justify-center gap-1.5 shadow-2xs"
           >
-            <Edit3 className="w-4 h-4 text-[#475569]" />
-            <span className="text-[12px] font-extrabold text-[#0F172A] whitespace-nowrap">일정 편집</span>
+            <Edit3 className="w-4 h-4 text-surface-subtle" />
+            <span className="text-caption font-extrabold text-surface-on-surface whitespace-nowrap">일정 편집</span>
           </button>
         </div>
 
         <button
           type="button"
           onClick={finishTimelineWayfinding}
-          className="w-full py-4 bg-gradient-to-r from-[#132B45] to-[#1E3A8A] text-white rounded-2xl text-[16px] font-black shadow-md hover:from-[#1E3A8A] hover:to-[#2563EB] active:scale-98 transition-all flex items-center justify-center gap-2"
+          className={`w-full py-3.5 ${accentBg} text-white rounded-2xl text-body font-black shadow-md hover:opacity-95 active:scale-98 transition-all flex items-center justify-center gap-2`}
         >
-          <CheckCircle2 className="w-4 h-4 text-[#93C5FD]" />
+          <CheckCircle2 className="w-4 h-4 text-white/90" />
           <span>길 안내 종료하기</span>
         </button>
       </div>
